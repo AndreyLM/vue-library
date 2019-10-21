@@ -4,19 +4,44 @@
       v-toolbar-title Study App
       v-spacer
       v-toolbar-items
-        v-btn(
-            text 
-            to="/profile"
-        ) 
-          v-icon account_circle 
-          | {{ user.login }}
-        v-btn(
-            text 
-            to="/logout"
-            @click="logout"
+        v-menu(
+          offset-y
+          open-on-hover
         )
-          v-icon exit_to_app
-          | Logout
+          template(
+            v-slot:activator="{ on }"
+          )
+            v-btn(
+              text
+              title="Go to profile"
+              to="/profile"
+              v-on="on"
+            ) 
+              v-icon account_circle 
+              | {{ user.login }}
+          v-list
+            v-flex(
+              xs12
+            )
+              v-card(
+                :key="0"
+                class="ma-3 pa-6"
+                outlined
+                tile
+              ) {{ user.first_name }} {{ user.middle_name }} {{ user.last_name }}
+              
+              v-flex(
+                xs12 offset-xs8
+                class="mr-3"
+              )
+                v-btn(
+                  text 
+                  to="/logout"
+                  @click="logout"
+                  class="pa-6"
+                )
+                  v-icon exit_to_app
+                  | Logout
 </template>
 
 <script>
@@ -36,7 +61,7 @@ export default {
         },
         drawerClick() {
             this.$emit("drawerClick")
-        }
+        },
     },
     computed: {
         ...mapGetters({ user: "user" }),
