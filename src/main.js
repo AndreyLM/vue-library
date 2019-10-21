@@ -8,6 +8,7 @@ import Fragment from 'vue-fragment'
 import store from './services/store'
 import router from './services/router'
 import server from './services/server'
+import Vuelidate from 'vuelidate'
 
 Vue.config.productionTip = false
 
@@ -20,6 +21,7 @@ Vue.use(server, {
 Vue.use(Notifications)
 Vue.use(require('vue-moment'))
 Vue.use(Fragment.Plugin)
+Vue.use(Vuelidate)
 
 new Vue({
   vuetify,

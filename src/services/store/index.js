@@ -1,15 +1,12 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import Chat from "./chat"
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     strict: true,
-    modules: { chat: Chat },
     state: {
         $server: {},
-        $socket: null,
         layout: 'clean-layout',
         authenticated: false,
         loading: true,
@@ -33,9 +30,6 @@ export default new Vuex.Store({
         },
         SetServer(state, server) {
             state.$server = server
-        },
-        SetSocket(state, socket) {
-            state.$socket = socket
         },
         SetServerToken(state, token) {
             state.$server.setToken(token)
