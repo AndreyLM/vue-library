@@ -66,6 +66,13 @@ export default new Vuex.Store({
             }
             return response
         },
+        async upload(context, data) {
+            let response = await context.rootState.$server.request('descriptions/upload', data, 'POST')
+            if (response.status == 200 ) {
+                context.dispatch('auth', response.data)
+            }
+            return response
+        },
         logout({ commit }) {
             commit('SetAuthenticated', false)
             commit('SetServerToken', '')
