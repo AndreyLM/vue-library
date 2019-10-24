@@ -11,9 +11,20 @@ class Server {
         this.tokenStorageKey = localStorageTokenKey
         this.baseUrl = baseUrl
         this.token = localStorage.getItem(localStorageTokenKey)
+        let userString = localStorage.getItem(localStorageTokenKey + "user") 
+        this.user = userString ? JSON.parse(userString) : {}
         this.loginURL = '/login'
         this.testAuthURL = '/check-auth'
         this.testLogoutURL = '/logout'
+    }
+
+    getUser() {
+        return this.user
+    }
+
+    setUser(user) {
+        this.user = user
+        localStorage.setItem(this.tokenStorageKey + "user", JSON.stringify(this.user))
     }
 
     setToken(token) {
@@ -62,10 +73,9 @@ class Server {
             let response = await Axios(packet) 
             return response.data
         } catch(error) {
-            if (error.response) {
-                return { status: (error.response.status) ? error.response.status : 0, message: error.response.data }
-            }
-            return { status: 0, message: "Undifined error" }
+            return (error.response) ?  
+                { status: (error.response.status) ? error.response.status : 0, message: error.response.data } 
+                : { status: 0, message: "Undifined error" }
         }
     }
 

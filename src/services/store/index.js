@@ -1,10 +1,13 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import UserModule from "./user/index";
+
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     strict: true,
+    modules: { user_manager: UserModule },
     state: {
         $server: {},
         layout: 'clean-layout',
@@ -19,11 +22,11 @@ export default new Vuex.Store({
         user(state) {
             return state.user
         } 
-
     },
     mutations: {
         SetUser(state, payload) {
             state.user = payload
+            state.$server.setUser(payload)
         },
         SetLayout(state, payload) {
             state.layout = payload
@@ -47,9 +50,8 @@ export default new Vuex.Store({
         async initApp( context ) {
             let data = await context.rootState.$server.testAuth()
             context.commit('SetAuthenticated', data.status == 200)
-            if (data.status == 200 ) {
-                context.commit('SetUser', data.data.user || {} )
-            }
+            context.commit('SetUser', context.rootState.$server.getUser() || {} )
+            
             return data.status == 200
         },
         async registration(context, data) {
@@ -66,6 +68,7 @@ export default new Vuex.Store({
             }
             return response
         },
+
         logout({ commit }) {
             commit('SetAuthenticated', false)
             commit('SetServerToken', '')

@@ -58,27 +58,36 @@ export default {
             type: Object,
             required: true
         },
-        loginErrors: {
-            required: true
-        },
-        firstNameErrors: {
-            required: true
-        },
-        middleNameErrors: {
-            required: true
-        },
-        lastNameErrors: {
-            required: true
-        },
     },
     computed: {
-        // loginErrors() {
-        //     const errors = []
-        //     if (!this.v.user.login.$dirty) return errors
-        //     !this.v.user.login.minLength && errors.push('Login must be at least 6 characters long')
-        //     !this.v.user.login.required && errors.push('Login is required.')
-        //     return errors
-        // },
+        loginErrors() {
+            const errors = []
+            if (!this.v.user.login.$dirty) return errors
+            !this.v.user.login.minLength && errors.push('Login must be at least 4 characters long')
+            !this.v.user.login.required && errors.push('Login is required.')
+            return errors
+        },
+        firstNameErrors() {
+            const errors = []
+            if (!this.v.user.first_name.$dirty) return errors
+            !this.v.user.first_name.minLength && errors.push('First Name must be at least 4 characters long')
+            !this.v.user.first_name.required && errors.push('First Name is required.')
+            return errors
+        },
+        middleNameErrors() {
+            const errors = []
+            if (!this.v.user.middle_name.$dirty) return errors
+            !this.v.user.middle_name.minLength && errors.push('Middle Name must be at least 4 characters long')
+            !this.v.user.middle_name.required && errors.push('Middle Name is required.')
+            return errors
+        },
+        lastNameErrors() {
+            const errors = []
+            if (!this.v.user.last_name.$dirty) return errors
+            !this.v.user.last_name.minLength && errors.push('Last Name must be at least 4 characters long')
+            !this.v.user.last_name.required && errors.push('Last Name is required.')
+            return errors
+        },
     },
 }
 </script>

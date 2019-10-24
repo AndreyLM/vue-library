@@ -5,22 +5,16 @@
       mobile-break-point=640
     )
       v-list
-        v-list-item(link to="/profile")
+        v-list-item(link to="/users")
           v-list-item-icon
-            v-icon account_circle
+            v-icon supervised_user_circle
           v-list-item-content
-            v-list-item-title Profile
-
-        v-list-item(link to="/chat")
-          v-list-item-icon
-            v-icon chat
-          v-list-item-content
-            v-list-item-title Chat
+            v-list-item-title  Users
 </template>
 
 <script>
 export default {
-    props: [ "initialDrawer"],
+    props: [ "initialDrawer" ],
     computed: {
         drawer() {
             return this.initialDrawer

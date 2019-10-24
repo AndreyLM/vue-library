@@ -8,3 +8,11 @@ module.exports = {
    }
  // ...other vue-cli plugin options...
 } 
+
+
+{"name":"Exception",
+"message":"Call to undefined method modules\\users\\forms\\UserForm::getDb()",
+"code":0,"type":"Error",
+"file":"/data/sites/www/alpmlibs.finport.net/www/vendor/yiisoft/yii2/validators/UniqueValidator.php",
+"line":139,"stack-trace":["#0 /data/sites/www/alpmlibs.finport.net/www/vendor/yiisoft/yii2/validators/Validator.php(257): yii\\validators\\UniqueValidator->validateAttribute(Object(modules\\users\\forms\\UserForm), 'login')","#1 /data/sites/www/alpmlibs.finport.net/www/vendor/yiisoft/yii2/base/Model.php(367): yii\\validators\\Validator->validateAttributes(Object(modules\\users\\forms\\UserForm), Array)","#2 /data/sites/www/alpmlibs.finport.net/www/application/modules/auth/controllers/AuthController.php(67): yii\\base\\Model->validate()","#3 [internal function]: modules\\auth\\controllers\\AuthController->actionRegistration()","#4 /data/sites/www/alpmlibs.finport.net/www/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)","#5 /data/sites/www/alpmlibs.finport.net/www/vendor/yiisoft/yii2/base/Controller.php(157): yii\\base\\InlineAction->runWithParams(Array)","#6 /data/sites/www/alpmlibs.finport.net/www/vendor/yiisoft/yii2/base/Module.php(528): yii\\base\\Controller->runAction('registration', Array)","#7 /data/sites/www/alpmlibs.finport.net/www/vendor/yiisoft/yii2/web/Application.php(103): yii\\base\\Module->runAction('auth/auth/regis...', Array)","#8 /data/sites/www/alpmlibs.finport.net/www/vendor/yiisoft/yii2/base/Application.php(386): yii\\web\\Application->handleRequest(Object(yii\\web\\Request))",
+"#9 /data/sites/www/alpmlibs.finport.net/www/application/web/index.php(28): yii\\base\\Application->run()","#10 {main}"]}

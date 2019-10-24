@@ -3,7 +3,7 @@
         v-flex.sm12.md10
             v-card.elevation-12
                 v-toolbar.dark(color="primary")
-                    v-toolbar-title Registration
+                    v-toolbar-title User Profile
                     v-spacer
                 v-card-text
                     v-form
@@ -13,6 +13,7 @@
                             v-col(
                                 cols="12"
                             )
+                                span User:
                                 v-text-field(
                                     prepend-icon="lock",
                                     name="password",
@@ -25,30 +26,18 @@
                                     :error-messages="passwordErrors"
                                     required
                                 )
-
-                                v-text-field(
-                                    prepend-icon="lock",
-                                    name="confirm_password",
-                                    label="Confirm Password",
-                                    type="password",
-                                    v-model="confirm_password"
-                                    :counter="6"
-                                    @input="$v.confirm_password.$touch()"
-                                    @blur="$v.confirm_password.$touch()"
-                                    :error-messages="confirmPasswordErrors"
-                                    required
-                                )
+                            
                
                 v-card-actions
                     v-spacer
                     v-btn(
                         color="default",
-                        @click.prepend="toLogin"
-                    ) Login
+                        to="/"
+                    ) Cancel
                     v-btn(
                         color="primary",
-                        @click.prepend="registration"
-                    ) registration
+                        @click.prepend="save"
+                    ) Save
                     v-spacer
 
 </template>
@@ -58,13 +47,13 @@
 import { required, minLength } from 'vuelidate/lib/validators'
 
 import User from '../user/User'
+
 import rules from '../user/UserRules'
 let validations = rules()
 validations.password = { required, minLength: minLength(6)}
-validations.confirm_password = { required, minLength: minLength(6)}
 
 export default {
-    name: "registration",
+    name: "profile",
     components: {
         User
     },
@@ -77,7 +66,6 @@ export default {
                 middle_name: "",
             },
             password: "",
-            confirm_password: "",
             emails: [ "" ],
             phones: [ "" ]
         }
@@ -90,20 +78,14 @@ export default {
             !this.$v.password.required && errors.push('Password is required.')
             return errors
         },
-        confirmPasswordErrors() {
-            const errors = []
-            if (!this.$v.password.$dirty) return errors
-            !this.$v.confirm_password.minLength && errors.push('Confirm password must be at least 6 characters long')
-            !this.$v.confirm_password.required && errors.push('Confirm password is required.')
-            this.confirm_password != this.password && errors.push('Confirm password not equal the password')
-            return errors
-        },
     },
+    // validations: {},
     validations: validations,
     methods: {
-        async registration() {
+        async save() {
             this.$v.$touch()
             if( this.$v.$invalid) {
+                console.log(this.$v)
                 this.$notify({
                     group: "alerts",
                     title: "Wrong data",
@@ -116,21 +98,40 @@ export default {
             this.user.password_repeat = this.confirm_password
             this.user.emails = this.emails
             this.user.phones = this.phones
-            let resp = await this.$store.dispatch("registration", this.user )
+
+            let resp = await this.$store.dispatch("user_manager/saveProfile", this.user )
             if ( resp.status != 200 ) {
                 this.$notify({
                     group: "alerts",
                     title: resp.status,
-                    text: resp.msg,
+                    text: resp.message,
                     type: 'error',
                 })
                 return
             }
-            this.$router.push({ path: '/' })
+            this.$notify({
+                group: "alerts",
+                title: resp.status,
+                text: resp.message,
+                type: 'success',
+            })  
+            // this.$router.push({ path: '/' })
         },
-       toLogin() {
-           this.$router.push({ path: '/login' })
-       }
+    },
+    async created() {
+        var resp = await this.$store.dispatch("user_manager/getProfile")
+        if ( resp.status == 200 ) {
+            this.user = resp.data.user
+            this.emails = resp.data.user.emails || [ "" ]
+            this.phones = resp.data.user.phones || [ "" ]
+        } else {
+            this.$notify({
+                group: "alerts",
+                title: "status: " + resp.status + " Code: " + ( resp.code || "" ),
+                text: resp.message,
+                type: 'error',
+            })  
+        }
     }
 }
 </script>
