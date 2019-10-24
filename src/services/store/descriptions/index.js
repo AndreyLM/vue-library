@@ -25,7 +25,7 @@ export default {
                 "offset": limit,
                 "order_by": order_by,  
             }
-            let response = await context.rootState.$server.request( '/descriptions', request, 'POST' )
+            let response = await context.rootState.$server.request( '/roles/123', request, 'GET' )
             if (response.status == 200) {
                 context.commit("setTotalCount", await response.data.count)
                 context.commit("setRegisterList", await response.data.models)
