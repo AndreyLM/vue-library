@@ -11,6 +11,7 @@
         
     v-content
       v-container.fluid.fill-height
+        notifications(width="50%" position='top center' group="alerts")
         router-view
         
 </template>

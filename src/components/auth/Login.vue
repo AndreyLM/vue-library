@@ -13,6 +13,9 @@
                             label="Login or email",
                             type="text"
                             v-model="user"
+                            @input="$v.user.$touch()"
+                            @blur="$v.user.$touch()"
+                            :error-messages="userErrors"
                         )
                         v-text-field(
                             prepend-icon="lock",
@@ -20,6 +23,9 @@
                             label="Password",
                             type="password",
                             v-model="password"
+                            @input="$v.password.$touch()"
+                            @blur="$v.password.$touch()"
+                            :error-messages="$v.password.$dirty && !$v.password.required ? [ 'The field is required' ] : !$v.password.minLength ? ['Min length must be 5 symbols'] : []"
                         )
                 v-card-actions
                     v-spacer
@@ -37,12 +43,39 @@
 </template>
 
 <script>
+
+import { required, minLength } from 'vuelidate/lib/validators'
+
 export default {
     name: "login",
     data: () => {
         return {
             user: "",
             password: ""
+        }
+    },
+    validations: {
+        user: {required, minLength: minLength(4)},
+        password: {required, minLength: minLength(6)},
+    },
+    computed: {
+        userErrors() {
+            var errors = []
+            if(!this.$v.user.$dirty) {
+                return errors
+            }
+            !this.$v.user.required && errors.push("The field is required")
+            !this.$v.user.minLength && errors.push("Min length must be 4 symbols") 
+            return errors   
+        },
+        passwordErrors() {
+            var errors = []
+            if(!this.$v.password.$dirty) {
+                return errors
+            }
+            !this.$v.password.required && errors.push("The field is required")
+            !this.$v.password.minLength && errors.push("Min length must be 6 symbols") 
+            return errors
         }
     },
     methods: {

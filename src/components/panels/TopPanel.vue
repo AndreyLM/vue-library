@@ -19,29 +19,29 @@
             ) 
               v-icon account_circle 
               | {{ user.login }}
-          v-list
-            v-flex(
+          v-flex(
               xs12
             )
-              v-card(
-                :key="0"
-                class="ma-3 pa-6"
-                outlined
-                tile
-              ) {{ user.first_name }} {{ user.middle_name }} {{ user.last_name }}
-              
-              v-flex(
-                xs12 offset-xs8
-                class="mr-3"
-              )
-                v-btn(
-                  text 
-                  to="/logout"
-                  @click="logout"
-                  class="pa-6"
-                )
-                  v-icon exit_to_app
-                  | Logout
+            
+              v-card 
+                v-card-text {{ user.first_name }} {{ user.middle_name }} {{ user.last_name }}
+                v-card-actions
+                  v-btn(
+                    text 
+                    to="/profile"
+                    class="pa-6"
+                  )
+                    v-icon folder_shared
+                    | Profile 
+                  v-btn(
+                    text 
+                    to="/logout"
+                    @click="logout"
+                    class="pa-6"
+                  )
+                    v-icon exit_to_app
+                    | Logout
+                 
 </template>
 
 <script>
