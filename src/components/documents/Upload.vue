@@ -84,6 +84,21 @@ export default {
         },
         handleFileUpload() {
             this.file = this.$refs.file.files[0];
+        },
+        async profile() {
+
+            let resp = await this.$store.dispatch("profile",{})
+            
+            if ( resp.status != 200 ) {
+                this.$notify({
+                    group: "alerts",
+                    title: resp.status,
+                    text: resp.message,
+                    type: 'error',
+                })
+                return
+            }
+            this.$router.push({ path: '/' })
         }
     },
 }
