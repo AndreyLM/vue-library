@@ -1,7 +1,7 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
 import AuthRoutes from "./auth"
-import DocumentsRoutes from "./documents"
+import DocumentsRoutes from "./descriptions"
 import UserRoutes from "./user"
 
 Vue.use(VueRouter)

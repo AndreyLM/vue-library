@@ -1,13 +1,14 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import UserModule from "./user/index";
+import DescriptionModule from "./descriptions/index";
 
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     strict: true,
-    modules: { user_manager: UserModule },
+    modules: { user_manager: UserModule, description_manager: DescriptionModule },
     state: {
         $server: {},
         layout: 'clean-layout',
