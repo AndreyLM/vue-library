@@ -4,17 +4,28 @@
      )
             v-card.elevation-12
                 v-toolbar.dark(color="primary")
-                    v-toolbar-title Descriptions Manager
+                    v-toolbar-title Articles
                     v-spacer
                 v-card-text
-                   v-data-table(
+                    v-dialog(
+                        v-model="dialog"
+                        max-width="500px"
+                    )
+                        article-form(
+                            :article="editedItem"
+                            :is_new="is_new"
+                            @submitArticle="submitArticle"
+                            @cancelArticle="cancelArticle"
+                        )
+
+                    v-data-table(
                         :headers="headers"
-                        :items="descriptions"
+                        :items="articles"
                         :options.sync="options"
                         :server-items-length="totalCount"
                         :loading="loading"
                         class="elevation-1"
-                   )
+                    )
                         template(
                             v-slot:top
                         )
@@ -23,34 +34,12 @@
                                 color="white"
                             )
                                 v-toolbar-title List
-
-                            v-dialog(
-                                v-model="dialog"
-                                max-width="500px"
-                            )
-                               v-card
-                                    v-card-title
-                                        span.headline Edit
-                                    v-card-text
-                                        v-container
-                                            v-row
-                                                v-col(cols12 sm="6" md="4")
-                                                    v-text-field(
-                                                        v-model="editedItem.login"
-                                                        label="Login"
-                                                    )
-                                    v-card-actions
-                                        v-spacer
-                                            v-btn(
-                                                color="blue darken-1" 
-                                                text 
-                                                @click="close"
-                                            ) Cancel
-                                            v-btn(
-                                                color="blue darken-1" 
-                                                text 
-                                                @click="save"
-                                            ) Save
+                                v-spacer
+                                v-icon(
+                                    color="primary"
+                                    @click="newArticle"
+                                    x-large
+                                ) add_box
                         
                         template(
                             v-slot:item.action="{ item }"
@@ -68,16 +57,19 @@
 <script>
 
 import { mapState } from "vuex"
+import ArticleForm from "./ArticleForm"
 
 export default {
     name: "descriptionList",
+    components: { ArticleForm },
     data: () => {
         return {
             loading: true,
             dialog: false,
             editedIndex: -1,
+            is_new: true,
             editedItem: {
-                uuid: "",
+                id: "",
                 code: 0,
                 language: "",
                 title: "",
@@ -97,7 +89,7 @@ export default {
         options: {
             async handler() {
                 this.loading = true
-                await this.$store.dispatch("description_manager/loadDescriptionList", this.options)
+                await this.$store.dispatch("article/loadList", this.options)
                 this.loading = false
             },
             deep: true,
@@ -108,13 +100,22 @@ export default {
     }, 
     computed: {
         ...mapState({
-            descriptions: state => state.description_manager.descriptionList,
-            totalCount: state => state.description_manager.totalCount,
+            articles: state => state.article.descriptionList,
+            totalCount: state => state.article.totalCount,
         })
     },
     methods: {
+        newArticle() {
+            this.dialog = true
+        },
+        submitArticle() {
+            this.dialog = false
+        },
+        cancelArticle() {
+            this.dialog = false
+        },
         editItem(item) {
-            this.editedIndex = this.descriptions.indexOf(item)
+            this.editedIndex = this.articles.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.dialog = true
         },
@@ -124,7 +125,7 @@ export default {
         },
         save() {
             if( this.editedIndex > -1 ) {
-                Object.assign(this.descriptions[this.editedIndex], this.editedItem)
+                Object.assign(this.articles[this.editedIndex], this.editedItem)
             }
             this.close()
         }

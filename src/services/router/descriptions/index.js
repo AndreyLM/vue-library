@@ -1,16 +1,16 @@
-import DescriptionUpload from "@/components/descriptions/Upload"
-import DescriptionList from "@/components/descriptions/List"
+import ArticleUpload from "@/components/article/Upload"
+import List from "@/components/article/List"
 
 
 export default [
     {
         path: '/upload',
         name: 'upload',
-        component: DescriptionUpload
+        component: ArticleUpload
     },
     {
-        path: '/descriptions',
-        name: 'descriptions',
-        component: DescriptionList
+        path: '/articles',
+        name: 'articles',
+        component: List
     },
 ]

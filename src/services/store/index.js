@@ -1,14 +1,17 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import DescriptionModule from "./descriptions/index";
+import Article from "./article";
 import UserModule from "./user";
 import RBAC from "./rbac"
+
+const LOGIN_URL = "/api/login"
+const REGISTRATION_URL = "/api/registration"
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     strict: true,
-    modules: { user_manager: UserModule, description_manager: DescriptionModule, rbac: RBAC },
+    modules: { user_manager: UserModule, article: Article, rbac: RBAC },
     state: {
         $server: {},
         layout: 'clean-layout',
@@ -43,11 +46,7 @@ export default new Vuex.Store({
         },
         SetAuthenticated(state, val) {
             state.authenticated = val
-            if (val) {
-                state.layout = 'app-layout'
-            } else {
-                state.layout = 'clean-layout'
-            }
+            state.layout = (val) ? 'app-layout' : 'clean-layout'  
         }
     },
     actions: {
@@ -55,28 +54,24 @@ export default new Vuex.Store({
             let data = await context.rootState.$server.testAuth()
             if ( data.status != 200 ) {
                 context.dispatch("logout")
-                return
+                return false
             } 
             context.commit('SetAuthenticated', data.status == 200 )
             context.commit('SetUser', context.rootState.$server.getUser() || {} )
             
             return data.status == 200
         },
-        async registration(context, data) {
-            let response = await context.rootState.$server.request('registration', data, 'POST')
-            if (response.status == 200 ) {
-                context.dispatch('auth', response.data)
-            }
-            return response
-        },
         async login(context, data) {
-            let response = await context.rootState.$server.request('login', data, 'POST')
-            if (response.status == 200 ) {
-                console.log(response.data)
-                context.dispatch('auth', response.data)
-            }
+            let response = await context.rootState.$server.request(LOGIN_URL, data, 'POST')
+            response.status == 200 && context.dispatch('auth', response.data)
             return response
         },
+        async registration(context, data) {
+            let response = await context.rootState.$server.request(REGISTRATION_URL, data, 'POST')
+            response.status == 200 && context.dispatch('auth', response.data)
+            return response
+        },
+        
         logout({ commit }) {
             commit('SetAuthenticated', false)
             commit('SetServerToken', '')

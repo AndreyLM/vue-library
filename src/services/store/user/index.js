@@ -1,6 +1,6 @@
-const PROFILE_URL = "/profile/index";
-const USERS_LIST = "/users/index";
-const USER_UPDATE ="/users/update"
+const PROFILE_URL = "/api/profile/index";
+const USERS_LIST =  "/api/users/index";
+const USER_UPDATE = "/api/users/update"
 
 export default {
     namespaced: true,
@@ -35,7 +35,7 @@ export default {
             context.commit("setTotalCount", 0)
         },
         async getProfile(context, data) {
-            let response = await context.rootState.$server.request( PROFILE_URL, data, 'GET' )
+            let response = await context.rootState.$server.request( PROFILE_URL, data, 'GET', { "x-app-token": "some-token" } )
             if (response.status == 401 ) {
                 context.commit("logout", null, { root: true })
             }

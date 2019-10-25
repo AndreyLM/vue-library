@@ -1,9 +1,9 @@
-const ROLES_LIST = "/roles/index"
-const PERMISSIONS_LIST = "/permissions/index"
-const ROLES_VIEW = "/roles/view"
-const ROLE_UPDATE = "/roles/update"
-const ROLE_CREATE = "/roles/create"
-const ROLE_DELETE = "/roles/delete"
+const ROLES_LIST = "/api/roles/index"
+const PERMISSIONS_LIST = "/api/permissions/index"
+const ROLES_VIEW = "/api/roles/view"
+const ROLE_UPDATE = "/api/roles/update"
+const ROLE_CREATE = "/api/roles/create"
+const ROLE_DELETE = "/api/roles/delete"
 
 export default {
     namespaced: true,

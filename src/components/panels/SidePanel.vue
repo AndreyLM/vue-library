@@ -19,12 +19,12 @@
             v-list-item-title  RBAC
 
       v-list
-        v-subheader Descriptions
-        v-list-item(link to="/descriptions")
+        v-subheader Articles
+        v-list-item(link to="/articles")
           v-list-item-icon
-            v-icon list
+            v-icon library_books
           v-list-item-content
-            v-list-item-title Descriptions
+            v-list-item-title Articles
         v-list-item(link to="/upload")
           v-list-item-icon
             v-icon mdi-paperclip

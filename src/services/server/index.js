@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import { assignmentExpression } from 'babel-types';
 
 export default {
     install: (Vue, { baseUrl, token }) => {
@@ -13,9 +14,8 @@ class Server {
         this.token = localStorage.getItem(localStorageTokenKey)
         let userString = localStorage.getItem(localStorageTokenKey + "user") 
         this.user = userString ? JSON.parse(userString) : {}
-        this.loginURL = '/login'
-        this.testAuthURL = '/check-auth'
-        this.testLogoutURL = '/logout'
+        this.testAuthURL = '/api/check-auth'
+        this.testLogoutURL = '/api/logout'
     }
 
     getUser() {
@@ -32,11 +32,6 @@ class Server {
         localStorage.setItem(this.tokenStorageKey, token)
     }
 
-    login(user, password) {
-        let self = this
-        return self.request(self.loginURL, { user, password }, 'POST' )
-    }
-
     testAuth() {
         let self = this
         return self.request(self.testAuthURL, {})
@@ -46,7 +41,7 @@ class Server {
         this.token = null
     }
 
-    async request(url, data, method) {
+    async request( url, data, method, custom_headers ) {
         if (!url || typeof url != 'string') return { status: 400, msg: `Invalid url: ${url}` }
         let self = this
         method = method || 'GET'
@@ -54,10 +49,13 @@ class Server {
        
         let Uri = self.baseUrl + ( url[0]!='/'? '/' : '') + url
         
+        let hds = self.headers()
+        custom_headers && Object.assign(hds, custom_headers)
+
         let packet = {
             method,
             url: Uri,
-            headers: self.headers()
+            headers: hds
         }
 
         switch (method) {
