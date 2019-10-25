@@ -12,6 +12,12 @@
           v-list-item-content
             v-list-item-title  Users
 
+        v-list-item(link to="/rbac")
+          v-list-item-icon
+            v-icon security
+          v-list-item-content
+            v-list-item-title  RBAC
+
       v-list
         v-subheader Descriptions
         v-list-item(link to="/descriptions")

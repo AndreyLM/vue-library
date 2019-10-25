@@ -1,12 +1,13 @@
 const PROFILE_URL = "/profile/index";
 const USERS_LIST = "/users/index";
+const USER_UPDATE ="/users/update"
 
 export default {
     namespaced: true,
     state: {
         userList: [],
-        page: 4,
-        totalCount: 5,
+        page: 0,
+        totalCount: 0,
 
     },
     mutations: {
@@ -18,7 +19,14 @@ export default {
         },
         setTotalCount(state, data) {
             state.totalCount = data
-        }
+        },
+        updateUser(state, data) {
+            state.userList.find( (el) => {
+                if(el.uuid == data.uuid) {
+                    Object.assign(el, data)        
+                }
+            })
+        } 
     },
     actions: {
         clearUserList(context) {
@@ -39,7 +47,6 @@ export default {
             return false
         },
         async loadUserList(context, data) {
-            console.log(data)
             let limit = (data.page) ? (data.page - 1 ) : 0
             let order_by = data.sortBy[0] ? data.sortBy[0] + ( data.sortDesc[0] ? " DESC": "") : ""
 
@@ -57,13 +64,19 @@ export default {
             }
 
             return false
+        },
+        async updateUser(context, data) {
+            let request = Object.assign({}, data)
+            request.user_uuid = request.uuid
+            request.is_active = request.is_active ? 1 : 0; 
+            let response = await context.rootState.$server.request( USER_UPDATE, request, 'POST' )
+            if (response.status == 200) {
+                context.commit("updateUser", data)
+            }
+
+            return response
         }
     }
 }
 
-// groupBy: Array(0)
-// groupDesc: Array(0)
-// itemsPerPage: 10
-// multiSort: false
-// mustSort: false
-// page: 1
+

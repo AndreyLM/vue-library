@@ -2,64 +2,81 @@
      v-col(
          cols="12"
      )
-            v-card.elevation-12
-                v-toolbar.dark(color="primary")
-                    v-toolbar-title User Manager
-                    v-spacer
-                v-card-text
-                   v-data-table(
+        v-card.elevation-12
+            v-toolbar.dark(color="primary")
+                v-toolbar-title User Manager
+                v-spacer
+            v-card-text
+                v-data-table(
                         :headers="headers"
                         :items="users"
                         :options.sync="options"
                         :server-items-length="totalCount"
                         :loading="loading"
                         class="elevation-1"
-                   )
-                        template(
-                            v-slot:top
+                )
+                    template(
+                        v-slot:top
+                    )
+                        v-toolbar(
+                            flat
+                            color="white"
                         )
-                            v-toolbar(
-                                flat
-                                color="white"
-                            )
-                                v-toolbar-title List
+                            v-toolbar-title List
 
-                            v-dialog(
-                                v-model="dialog"
-                                max-width="500px"
-                            )
-                               v-card
-                                    v-card-title
-                                        span.headline Edit
-                                    v-card-text
-                                        v-container
-                                            v-row
-                                                v-col(cols12 sm="6" md="4")
-                                                    v-text-field(
-                                                        v-model="editedItem.login"
-                                                        label="Login"
-                                                    )
-                                    v-card-actions
-                                        v-spacer
-                                            v-btn(
-                                                color="blue darken-1" 
-                                                text 
-                                                @click="close"
-                                            ) Cancel
-                                            v-btn(
-                                                color="blue darken-1" 
-                                                text 
-                                                @click="save"
-                                            ) Save
-                        
-                        template(
-                            v-slot:item.action="{ item }"
+                        v-dialog(
+                            v-model="dialog"
+                            max-width="500px"
                         )
-                            v-icon(
-                                class="mr-2"
-                                small
-                                @click="editItem(item)"
-                            ) edit
+                            v-card
+                                v-card-title
+                                    span.headline Edit
+                                v-card-text
+                                    v-container
+                                        v-row
+                                            v-col(cols12 md="6")
+                                                v-select(
+                                                    v-model="editedItem.role_uuid"
+                                                    label="Role"
+                                                    :items="roles"
+                                                    item-text="name"
+                                                    item-value="uuid"
+                                                )
+
+                                            v-col(cols12 md="6")
+                                                v-switch(
+                                                    v-model="editedItem.is_active"
+                                                    label="Is active"
+                                                )
+                                v-card-actions
+                                    v-spacer
+                                        v-btn(
+                                            color="blue darken-1" 
+                                            text 
+                                            @click="close"
+                                        ) Cancel
+                                        v-btn(
+                                            color="blue darken-1" 
+                                            text 
+                                            @click="save"
+                                        ) Save
+                    
+                    template(
+                        v-slot:item.action="{ item }"
+                    )
+                        v-icon(
+                            class="mr-2"
+                            small
+                            @click="editItem(item)"
+                        ) edit
+                    template(
+                        v-slot:item.is_active="{ item }"
+                    )
+                        v-checkbox(
+                            readonly=true
+                            disabled=true
+                            v-model="item.is_active"
+                        )
                                
                         
 
@@ -89,6 +106,7 @@ export default {
             headers: [
                 { text: 'login', value: 'login' },
                 { text: 'Full Name', value: 'full_name' },
+                { text: 'Active', value: 'is_active' },
                 { text: 'Role', value: 'role_name' },
                 { text: 'Actions', value: 'action', sortable: false },
             ]
@@ -111,6 +129,7 @@ export default {
         ...mapState({
             users: state => state.user_manager.userList,
             totalCount: state => state.user_manager.totalCount,
+            roles: state => state.rbac.roles,
         })
     },
     methods: {
@@ -123,15 +142,22 @@ export default {
             this.dialog = false
             this.editedItem = {}
         },
-        save() {
+        async save() {
             if( this.editedIndex > -1 ) {
-                Object.assign(this.users[this.editedIndex], this.editedItem)
+                    let { role_uuid, role_name } = this.editedItem
+                    this.roles.find( (el) => {
+                        if(el.uuid == role_uuid) {
+                            role_name = el.name
+                        }
+                    })
+                    this.editedItem.role_name = role_name
+                    this.$store.dispatch("user_manager/updateUser", this.editedItem) 
             }
             this.close()
         }
     },
     mounted() {
-        // this.$store.dispatch("user_manager/loadUserList", this.options) 
+        !this.roles.length && this.$store.dispatch("rbac/loadRoles") 
     }
 }
 

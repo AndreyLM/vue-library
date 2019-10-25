@@ -1,20 +1,20 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import UserModule from "./user/index";
 import DescriptionModule from "./descriptions/index";
-
+import UserModule from "./user";
+import RBAC from "./rbac"
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     strict: true,
-    modules: { user_manager: UserModule, description_manager: DescriptionModule },
+    modules: { user_manager: UserModule, description_manager: DescriptionModule, rbac: RBAC },
     state: {
         $server: {},
         layout: 'clean-layout',
         authenticated: false,
         loading: true,
-        user: {}
+        user: {},
     },
     getters: {
         layout(state) {
@@ -22,15 +22,18 @@ export default new Vuex.Store({
         },
         user(state) {
             return state.user
-        } 
+        },
     },
     mutations: {
-        SetUser(state, payload) {
-            state.user = payload
-            state.$server.setUser(payload)
+        SetUser(state, data) {
+            state.user = data
+            state.$server.setUser(data)
         },
-        SetLayout(state, payload) {
-            state.layout = payload
+        SetUserPermissions(state, data){
+            state.user_permissions = data || []
+        },
+        SetLayout(state, data) {
+            state.layout = data
         },
         SetServer(state, server) {
             state.$server = server
@@ -65,13 +68,7 @@ export default new Vuex.Store({
         async login(context, data) {
             let response = await context.rootState.$server.request('login', data, 'POST')
             if (response.status == 200 ) {
-                context.dispatch('auth', response.data)
-            }
-            return response
-        },
-        async upload(context, data) {
-            let response = await context.rootState.$server.request('descriptions/upload', data, 'POST')
-            if (response.status == 200 ) {
+                console.log(response.data)
                 context.dispatch('auth', response.data)
             }
             return response
@@ -82,7 +79,8 @@ export default new Vuex.Store({
             commit('SetUser', {})
 
         },
-        auth({ commit }, {token, user}) {
+        auth({ commit }, {token, user, permissions}) {
+            console.log(permissions)
             commit('SetServerToken', token)
             commit('SetUser', user)
             commit('SetAuthenticated', true)
