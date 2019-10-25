@@ -50,16 +50,17 @@
                                                 )
                                 v-card-actions
                                     v-spacer
-                                        v-btn(
-                                            color="blue darken-1" 
-                                            text 
-                                            @click="close"
-                                        ) Cancel
-                                        v-btn(
-                                            color="blue darken-1" 
-                                            text 
-                                            @click="save"
-                                        ) Save
+                                    v-btn(
+                                        color="blue darken-1" 
+                                        text 
+                                        @click="close"
+                                    ) Cancel
+                                    v-btn(
+                                        color="blue darken-1" 
+                                        text 
+                                        @click="save"
+                                    ) Save
+                                    v-spacer
                     
                     template(
                         v-slot:item.action="{ item }"
@@ -143,16 +144,24 @@ export default {
             this.editedItem = {}
         },
         async save() {
-            if( this.editedIndex > -1 ) {
-                    let { role_uuid, role_name } = this.editedItem
-                    this.roles.find( (el) => {
-                        if(el.uuid == role_uuid) {
-                            role_name = el.name
-                        }
-                    })
-                    this.editedItem.role_name = role_name
-                    this.$store.dispatch("user_manager/updateUser", this.editedItem) 
+            if( this.editedIndex == -1 ) {
+                this.close()
             }
+
+            let { role_uuid, role_name } = this.editedItem
+            this.roles.find( (el) => {
+                if(el.uuid == role_uuid) {
+                    role_name = el.name
+                }
+            })
+            this.editedItem.role_name = role_name
+            let resp = await this.$store.dispatch("user_manager/updateUser", this.editedItem)
+            this.$notify({
+                group: "alerts",
+                title: resp.status || 0,
+                text: resp.message || "undefined",
+                type: ( resp.status == 200 ) ? "success" : "error",
+            })
             this.close()
         }
     },

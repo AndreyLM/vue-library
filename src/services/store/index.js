@@ -52,7 +52,11 @@ export default new Vuex.Store({
     actions: {
         async initApp( context ) {
             let data = await context.rootState.$server.testAuth()
-            context.commit('SetAuthenticated', data.status == 200)
+            if ( data.status != 200 ) {
+                context.dispatch("logout")
+                return
+            } 
+            context.commit('SetAuthenticated', data.status == 200 )
             context.commit('SetUser', context.rootState.$server.getUser() || {} )
             
             return data.status == 200
@@ -76,10 +80,11 @@ export default new Vuex.Store({
             commit('SetAuthenticated', false)
             commit('SetServerToken', '')
             commit('SetUser', {})
-
+            commit('user_manager/setUserList', [])
+            commit('rbac/setRoles', [])
+            commit('rbac/setPermissions', [])
         },
-        auth({ commit }, {token, user, permissions}) {
-            console.log(permissions)
+        auth({ commit }, {token, user }) {
             commit('SetServerToken', token)
             commit('SetUser', user)
             commit('SetAuthenticated', true)

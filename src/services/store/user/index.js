@@ -36,15 +36,13 @@ export default {
         },
         async getProfile(context, data) {
             let response = await context.rootState.$server.request( PROFILE_URL, data, 'GET' )
+            if (response.status == 401 ) {
+                context.commit("logout", null, { root: true })
+            }
             return response
         },
         async saveProfile(context, data) {
-            let response = await context.rootState.$server.request( PROFILE_URL, data, 'POST' )
-            if (response.status == 200 ) {
-                return true
-            }
-
-            return false
+            return await context.rootState.$server.request( PROFILE_URL, data, 'POST' )
         },
         async loadUserList(context, data) {
             let limit = (data.page) ? (data.page - 1 ) : 0

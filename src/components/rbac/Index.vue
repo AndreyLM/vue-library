@@ -7,8 +7,9 @@
                 v-toolbar-title RBAC Manager
                 v-spacer
             v-card-text
+
                 v-dialog(
-                    v-model="dialog"
+                    v-model="dialog_new"
                     max-width="500px"
                 )
                     v-card
@@ -28,13 +29,36 @@
                             v-btn(
                                 color="blue darken-1" 
                                 text 
-                                @click="close"
+                                @click="closeNew"
                             ) Cancel
                             v-btn(
                                 color="blue darken-1" 
                                 text 
-                                @click="save"
+                                @click="saveNew"
                             ) Save
+                            v-spacer
+
+                v-dialog(
+                    v-model="dialog_delete"
+                    max-width="500px"
+                )
+                    v-card
+                        v-card-title
+                            span.headline Delete Role {{ `"${delete_role.name}"` }}?
+                        v-card-text
+                            
+                        v-card-actions
+                            v-spacer
+                            v-btn(
+                                color="blue darken-1" 
+                                text 
+                                @click="closeDelete"
+                            ) Cancel
+                            v-btn(
+                                color="blue darken-1" 
+                                text 
+                                @click="saveDelete"
+                            ) OK
                             v-spacer
 
                 v-row
@@ -54,14 +78,15 @@
                                         @change="getRolePermissions(role.uuid)"
                                     )
                                 v-col(cols="2")
-                                    span(
+                                    v-btn(
+                                        text
                                         color="danger"
-                                        @click="deleteRole(role.uuid)"
+                                        @click="openRoleDialogDelete(role)"
                                     ) X
                        
                         v-icon(
                             color="primary"
-                            @click="createRoleDialog"
+                            @click="openRoleDialogNew"
                             x-large
                         ) add_box
                     v-col(cols="8")
@@ -110,8 +135,10 @@ export default {
     name: "index",
     data: () => {
         return {
-            dialog: false,
+            dialog_new: false,
+            dialog_delete: false,
             role_name: "",
+            delete_role: { name: "", uuid: "" },
             loading: false,
             selectedRoleUUID: "",
             selectedRolePermissions: [],
@@ -159,14 +186,21 @@ export default {
         reset() {
             this.selectedRoleUUID && this.getRolePermissions(this.selectedRoleUUID)
         },
-        createRoleDialog() {
-            this.dialog = true
+        openRoleDialogNew() {
+            this.dialog_new = true
         },
-        close() {
-            this.dialog = false
+        openRoleDialogDelete(role) {
+            Object.assign(this.delete_role, role)
+            this.dialog_delete = true
+        },
+        closeNew() {
+            this.dialog_new = false
             this.role_name = ""
         },
-        async save() {
+        closeDelete() {
+            this.dialog_delete = false
+        },
+        async saveNew() {
             this.$v.$touch()
             if( this.$v.$invalid ) {
                 this.$notify({
@@ -181,26 +215,30 @@ export default {
             if ( resp.status == 200 ) {
                 // TODO neet to get role from response
                 await this.$store.dispatch("rbac/loadRoles")
-                this.$notify({
-                    group: "alerts",
-                    title: resp.status,
-                    text: resp.message,
-                    type: "success",
-                })
-                this.dialog = false
-                return
             }
 
             this.$notify({
                     group: "alerts",
                     title: resp.status || 0,
                     text: resp.message || "Undefined",
-                    type: "error",
+                    type: ( resp.status == 200 ) ? "success" : "error",
                 })
-            this.dialog = false
+            this.dialog_new = false
         },
-        deleteRole(uuid) {
-            
+        async saveDelete(uuid) {
+            let resp = await this.$store.dispatch("rbac/deleteRole", { uuid: this.delete_role.uuid })
+            if ( resp.status == 200 ) {
+                // TODO neet to get role from response
+                await this.$store.dispatch("rbac/loadRoles")
+            }
+
+            this.$notify({
+                    group: "alerts",
+                    title: resp.status || 0,
+                    text: resp.message || "Undefined",
+                    type: ( resp.status == 200 ) ? "success" : "error",
+                })
+            this.dialog_delete = false
         },
     },
     created() {

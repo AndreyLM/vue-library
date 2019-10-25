@@ -100,20 +100,11 @@ export default {
             this.user.phones = this.phones
 
             let resp = await this.$store.dispatch("user_manager/saveProfile", this.user )
-            if ( resp.status != 200 ) {
-                this.$notify({
-                    group: "alerts",
-                    title: resp.status,
-                    text: resp.message,
-                    type: 'error',
-                })
-                return
-            }
             this.$notify({
                 group: "alerts",
                 title: resp.status,
                 text: resp.message,
-                type: 'success',
+                type: ( response.status == 200 ) ? "success" : "error",
             })  
             // this.$router.push({ path: '/' })
         },
