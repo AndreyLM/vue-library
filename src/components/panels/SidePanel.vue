@@ -10,6 +10,12 @@
             v-icon supervised_user_circle
           v-list-item-content
             v-list-item-title  Users
+
+        v-list-item(link to="/rbac")
+          v-list-item-icon
+            v-icon security
+          v-list-item-content
+            v-list-item-title  RBAC
 </template>
 
 <script>
