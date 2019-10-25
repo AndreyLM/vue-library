@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import DescriptionModule from "./descriptions/index";
 import UserModule from "./user";
 import RBAC from "./rbac"
 
@@ -7,7 +8,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     strict: true,
-    modules: { user_manager: UserModule, rbac: RBAC },
+    modules: { user_manager: UserModule, description_manager: DescriptionModule, rbac: RBAC },
     state: {
         $server: {},
         layout: 'clean-layout',

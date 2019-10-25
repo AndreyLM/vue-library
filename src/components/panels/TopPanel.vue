@@ -19,10 +19,10 @@
             ) 
               v-icon account_circle 
               | {{ user.login }}
-          v-list
-            v-flex(
+          v-flex(
               xs12
             )
+            
               v-card 
                 v-card-text {{ user.first_name }} {{ user.middle_name }} {{ user.last_name }}
                 v-card-actions

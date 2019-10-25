@@ -9,6 +9,8 @@ import store from './services/store'
 import router from './services/router'
 import server from './services/server'
 import Vuelidate from 'vuelidate'
+import VueAxios from '@/plugins/axios'
+
 
 Vue.config.productionTip = false
 
@@ -22,6 +24,7 @@ Vue.use(Notifications)
 Vue.use(require('vue-moment'))
 Vue.use(Fragment.Plugin)
 Vue.use(Vuelidate)
+Vue.use(VueAxios)
 
 new Vue({
   vuetify,
