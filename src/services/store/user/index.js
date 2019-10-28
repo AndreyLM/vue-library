@@ -35,7 +35,7 @@ export default {
             context.commit("setTotalCount", 0)
         },
         async getProfile(context, data) {
-            let response = await context.rootState.$server.request( PROFILE_URL, data, 'GET', { "x-app-token": "some-token" } )
+            let response = await context.rootState.$server.request( PROFILE_URL, data, 'GET', { "Content-Type": "xml" } )
             if (response.status == 401 ) {
                 context.commit("logout", null, { root: true })
             }

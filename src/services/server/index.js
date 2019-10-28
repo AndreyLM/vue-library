@@ -66,7 +66,7 @@ class Server {
             case 'GET':
                 packet.params = data
         }
-
+        console.log(packet)
         try {
             let response = await Axios(packet) 
             return response.data
