@@ -157,6 +157,7 @@ export default {
         async getRolePermissions(uuid) {
             this.loading = true
             let resp = await this.$store.dispatch("rbac/getRolePermissions", uuid)
+            console.log(resp)
             if (resp.status == 200) {
                 this.selectedRolePermissions = resp.data.permissions
                 this.loading = false

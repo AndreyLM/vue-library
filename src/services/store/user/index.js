@@ -1,6 +1,6 @@
-const PROFILE_URL = "/api/profile/index";
-const USERS_LIST =  "/api/users/index";
-const USER_UPDATE = "/api/users/update"
+const PROFILE_URL = "/api/profile";
+const USERS_LIST =  "/api/users";
+const USER_UPDATE = "/api/users"
 
 export default {
     namespaced: true,
@@ -42,7 +42,7 @@ export default {
             return response
         },
         async saveProfile(context, data) {
-            return await context.rootState.$server.request( PROFILE_URL, data, 'POST' )
+            return await context.rootState.$server.request( PROFILE_URL, data, 'PUT' )
         },
         async loadUserList(context, data) {
             let limit = (data.page) ? (data.page - 1 ) : 0
@@ -53,7 +53,7 @@ export default {
                 "offset": limit,
                 "order_by": order_by,  
             }
-            let response = await context.rootState.$server.request( USERS_LIST, request, 'POST' )
+            let response = await context.rootState.$server.request( USERS_LIST, request, 'GET' )
             if (response.status == 200) {
                 context.commit("setTotalCount", await response.data.count)
                 context.commit("setUserList", await response.data.users)
@@ -67,7 +67,7 @@ export default {
             let request = Object.assign({}, data)
             request.user_uuid = request.uuid
             request.is_active = request.is_active ? 1 : 0; 
-            let response = await context.rootState.$server.request( USER_UPDATE, request, 'POST' )
+            let response = await context.rootState.$server.request( USER_UPDATE + '/' + request.uuid, request, 'PUT' )
             if (response.status == 200) {
                 context.commit("updateUser", data)
             }

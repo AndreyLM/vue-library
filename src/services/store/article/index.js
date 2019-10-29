@@ -1,5 +1,5 @@
 const ARTICLE_LIST = "/api/descriptions"
-const ARTICLE_CREATE = "/api/descriptions/create"
+const ARTICLE_CREATE = "/api/descriptions"
 
 export default {
     namespaced: true,
@@ -29,7 +29,7 @@ export default {
                 "offset": limit,
                 "order_by": order_by,  
             }
-            let response = await context.rootState.$server.request( ARTICLE_LIST, request, 'GET' )
+            let response = await context.rootState.$server.request( ARTICLE_LIST, {}, 'GET' )
             response.status == 200 && context.commit("setTotalCount", response.data.count) 
             response.status == 200 && context.commit("setRegisterList", await response.data.models) 
                 

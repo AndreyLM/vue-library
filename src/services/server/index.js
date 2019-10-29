@@ -78,7 +78,8 @@ class Server {
     }
 
     headers() {
-        return { 
+        return {
+            'Cache-Control': 'no-cache', 
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + this.token, 
         }

@@ -104,7 +104,7 @@ export default {
                 group: "alerts",
                 title: resp.status,
                 text: resp.message,
-                type: ( response.status == 200 ) ? "success" : "error",
+                type: ( resp.status == 200 ) ? "success" : "error",
             })  
             // this.$router.push({ path: '/' })
         },
