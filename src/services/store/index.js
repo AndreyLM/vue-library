@@ -4,8 +4,8 @@ import Article from "./article";
 import UserModule from "./user";
 import RBAC from "./rbac"
 
-const LOGIN_URL = "/api/login"
-const REGISTRATION_URL = "/api/registration"
+const LOGIN = "/api/login"
+const REGISTRATION = "/api/registration"
 
 Vue.use(Vuex);
 
@@ -26,9 +26,23 @@ export default new Vuex.Store({
         user(state) {
             return state.user
         },
+        permissions(state) {
+            return state.user.permissions || []
+        },
+        accessAny: state  => (...data ) => {
+            return data.some( (e) => {
+                return (state.user.permissions || []).includes(e)
+            })
+        },
+        accessAll: state => (...data ) => {
+            return !data.some( (e) => {
+                return !(state.user.permissions || []).includes(e)
+            })
+        }
     },
     mutations: {
         SetUser(state, data) {
+            console.log("setuser")
             state.user = data
             state.$server.setUser(data)
         },
@@ -56,22 +70,21 @@ export default new Vuex.Store({
                 context.dispatch("logout")
                 return false
             } 
-            context.commit('SetAuthenticated', data.status == 200 )
+            context.commit('SetAuthenticated', true )
             context.commit('SetUser', context.rootState.$server.getUser() || {} )
             
-            return data.status == 200
+            return true
         },
         async login(context, data) {
-            let response = await context.rootState.$server.request(LOGIN_URL, data, 'POST')
+            let response = await context.rootState.$server.request(LOGIN, data, 'POST')
             response.status == 200 && context.dispatch('auth', response.data)
             return response
         },
         async registration(context, data) {
-            let response = await context.rootState.$server.request(REGISTRATION_URL, data, 'POST')
+            let response = await context.rootState.$server.request(REGISTRATION, data, 'POST')
             response.status == 200 && context.dispatch('auth', response.data)
             return response
         },
-        
         logout({ commit }) {
             commit('SetAuthenticated', false)
             commit('SetServerToken', '')

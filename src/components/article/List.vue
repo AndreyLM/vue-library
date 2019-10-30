@@ -6,6 +6,13 @@
                 v-toolbar.dark(color="primary")
                     v-toolbar-title Articles
                     v-spacer
+                    v-text-field(
+                        v-model="options.search"
+                        append-icon="search"
+                        label="Search"
+                        single-line
+                        hide-details
+                    )
                 v-card-text
                     v-dialog(
                         v-model="dialog"
@@ -24,6 +31,7 @@
                         :options.sync="options"
                         :server-items-length="totalCount"
                         :loading="loading"
+                        :search.sync="options.search"
                         class="elevation-1"
                     )
                         template(
@@ -65,6 +73,7 @@ export default {
     data: () => {
         return {
             loading: true,
+            search: '',
             dialog: false,
             editedIndex: -1,
             is_new: true,
@@ -75,7 +84,7 @@ export default {
                 title: "",
                 description: ""
             },
-            options: {},
+            options: { search: ''},
             headers: [
                 { text: 'Code', value: 'code' },
                 { text: 'Language', value: 'language' },

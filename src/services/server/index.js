@@ -1,13 +1,6 @@
 import Axios from 'axios'
-import { assignmentExpression } from 'babel-types';
 
-export default {
-    install: (Vue, { baseUrl, token }) => {
-        Vue.prototype.$server = new Server(baseUrl, token)
-    }
-}
-
-class Server {
+export default class  Server {
     constructor(baseUrl, localStorageTokenKey) {
         this.tokenStorageKey = localStorageTokenKey
         this.baseUrl = baseUrl
@@ -42,6 +35,8 @@ class Server {
     }
 
     async request( url, data, method, custom_headers ) {
+        console.log(url)
+
         if (!url || typeof url != 'string') return { status: 400, msg: `Invalid url: ${url}` }
         let self = this
         method = method || 'GET'
@@ -66,7 +61,6 @@ class Server {
             case 'GET':
                 packet.params = data
         }
-        console.log(packet)
         try {
             let response = await Axios(packet) 
             return response.data

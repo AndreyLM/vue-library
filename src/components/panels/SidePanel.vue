@@ -4,39 +4,42 @@
       app
       mobile-break-point=640
     )
-      v-list
-        v-subheader Users
-        v-list-item(link to="/users")
+      v-list(
+          v-for="item, index in items"
+          v-if="$store.getters.accessAny(...item.permissions)"
+          :key="index"
+      )
+        v-subheader {{ item.subheader }}
+        
+        v-list-item(
+          v-for="el, ind in item.items"
+          :key="ind"
+          link 
+          :to="el.link"
+        )
           v-list-item-icon
-            v-icon supervised_user_circle
+            v-icon {{ el.icon }}
           v-list-item-content
-            v-list-item-title  Users
-
-        v-list-item(link to="/rbac")
-          v-list-item-icon
-            v-icon security
-          v-list-item-content
-            v-list-item-title  RBAC
-
-      v-list
-        v-subheader Articles
-        v-list-item(link to="/articles")
-          v-list-item-icon
-            v-icon library_books
-          v-list-item-content
-            v-list-item-title Articles
-        v-list-item(link to="/upload")
-          v-list-item-icon
-            v-icon mdi-paperclip
-          v-list-item-content
-            v-list-item-title Upload
+            v-list-item-title  {{ el.title }}
 
 </template>
 
 <script>
+
+import Items from "./items"
+import { mapState } from "vuex"
+
 export default {
     props: [ "initialDrawer" ],
+    data: () => {
+      return {
+        items: Items
+      }
+    },
     computed: {
+        ...mapState({
+          permissions: state => state.user.permissions
+        }),
         drawer() {
             return this.initialDrawer
         }

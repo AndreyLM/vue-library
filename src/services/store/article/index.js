@@ -1,5 +1,4 @@
-const ARTICLE_LIST = "/api/descriptions"
-const ARTICLE_CREATE = "/api/descriptions/create"
+const ARTICLES = "/api/descriptions"
 
 export default {
     namespaced: true,
@@ -27,16 +26,17 @@ export default {
             let request = {
                 "limit": data.itemsPerPage || 10,
                 "offset": limit,
-                "order_by": order_by,  
+                "order_by": order_by,
+                "search": data.search || "",  
             }
-            let response = await context.rootState.$server.request( ARTICLE_LIST, request, 'GET' )
+            let response = await context.rootState.$server.request( ARTICLES, request, 'GET' )
             response.status == 200 && context.commit("setTotalCount", response.data.count) 
             response.status == 200 && context.commit("setRegisterList", await response.data.models) 
                 
             return response.data.totalCount || false
         },
         async create(context, data) {
-            return await context.rootState.$server.request( ARTICLE_CREATE, data, 'POST' )
+            return await context.rootState.$server.request( ARTICLES, data, 'POST' )
         }
     }
 }

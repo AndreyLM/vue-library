@@ -1,9 +1,5 @@
-const ROLES_LIST = "/api/roles/index"
-const PERMISSIONS_LIST = "/api/permissions/index"
-const ROLES_VIEW = "/api/roles/view"
-const ROLE_UPDATE = "/api/roles/update"
-const ROLE_CREATE = "/api/roles/create"
-const ROLE_DELETE = "/api/roles/delete"
+const ROLES= "/api/roles"
+const PERMISSIONS = "/api/permissions"
 
 export default {
     namespaced: true,
@@ -21,26 +17,26 @@ export default {
     },
     actions: {
         async loadRoles(context) {
-            let response = await context.rootState.$server.request( ROLES_LIST, {}, 'GET' )
+            let response = await context.rootState.$server.request( ROLES, {}, 'GET' )
             response.status == 200 && context.commit("setRoles", response.data.roles)
             return response
         },
         async loadPermissions(context) {
-            let response = await context.rootState.$server.request( PERMISSIONS_LIST, {}, 'GET' )
+            let response = await context.rootState.$server.request( PERMISSIONS, {}, 'GET' )
             response.status == 200 && context.commit("setPermissions", response.data.permissions) 
             return response
         },
         async getRolePermissions(context, data) {
-            return await context.rootState.$server.request( ROLES_VIEW, { uuid: data }, 'POST' )
+            return await context.rootState.$server.request( `${ROLES}/${data}`, {}, 'GET' )
         },
         async updateRolePermissions(context, data) {
-            return await context.rootState.$server.request( ROLE_UPDATE, data, 'POST' )
+            return await context.rootState.$server.request( `${ROLES}/${data.uuid}`, data, 'PATCH' )
         },
         async createRole(context, data) {
-            return await context.rootState.$server.request( ROLE_CREATE, data, 'POST' )
+            return await context.rootState.$server.request( ROLES, data, 'POST' )
         },
         async deleteRole(context, data) {
-            return await context.rootState.$server.request( ROLE_DELETE, data, 'POST' )
+            return await context.rootState.$server.request( `${ROLES}/${data.uuid}`, data, 'DELETE' )
         }
     }
 }
