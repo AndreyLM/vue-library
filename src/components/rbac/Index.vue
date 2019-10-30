@@ -226,7 +226,7 @@ export default {
                 })
             this.dialog_new = false
         },
-        async saveDelete(uuid) {
+        async saveDelete() {
             let resp = await this.$store.dispatch("rbac/deleteRole", { uuid: this.delete_role.uuid })
             if ( resp.status == 200 ) {
                 // TODO neet to get role from response

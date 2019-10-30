@@ -7,38 +7,54 @@ import Fragment from 'vue-fragment'
 
 import store from './services/store'
 import router from './services/router'
-import server from './services/server'
 import Vuelidate from 'vuelidate'
 import VueAxios from '@/plugins/axios'
+import Server from './services/server'
 
+let s = new Server(process.env.VUE_APP_SERVER_URL || '', process.env.VUE_APP_TOKEN_NAME || "vue-app")
+store.commit("SetServer", s)
+store.dispatch("initApp").then( () => { initalizeVue() } ).catch( err => {
+    console.log(err)
+    initalizeVue()
+  }
+)
 
 Vue.config.productionTip = false
 
-
-// Vue.use(Vuetify)
-Vue.use(server, {
-  baseUrl: process.env.VUE_APP_SERVER_URL || '',
-  localStorageTokenKey: process.env.VUE_APP_TOKEN_NAME || "vue-app",
-})
 Vue.use(Notifications)
 Vue.use(require('vue-moment'))
 Vue.use(Fragment.Plugin)
 Vue.use(Vuelidate)
 Vue.use(VueAxios)
 
-new Vue({
-  vuetify,
-  store,
-  router,
-  render: h => h(App),
-  async mounted() {
-      let vm = this
-      this.$store.commit("SetServer", vm.$server)
-      let authenticated = await this.$store.dispatch("initApp")
-      let path = "/login"
-      if( authenticated ) {
-        path = '/'
-      } 
-      vm.$router.push( { path: path })
-  }
-}).$mount('#app')
+function initalizeVue()
+{
+  return new Vue({
+    vuetify,
+    store,
+    router,
+    render: h => h(App),
+    beforeCreate() {
+        !this.$store.state.authenticated && this.$router.push( { path: "/login" }) 
+    }
+  }).$mount('#app')
+}
+
+// new Vue({
+//   vuetify,
+//   store,
+//   router,
+//   render: h => h(App),
+//   async beforeCreate() {
+//       let authenticated = await this.$store.dispatch("initApp")
+//       this.$router.beforeResolve( (to, from, next) => {
+//           console.log()
+//           if( !authenticated) {
+//               this.$router.push( { path: "/login" })
+//               return
+//           }
+//           next()   
+//       })
+//       // !authenticated && this.$router.push( { path: "/login" })
+//   }
+// }).$mount('#app')

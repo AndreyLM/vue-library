@@ -1,6 +1,5 @@
-const PROFILE_URL = "/api/profile";
-const USERS_LIST =  "/api/users";
-const USER_UPDATE = "/api/users"
+const PROFILE = "/api/profile";
+const USERS =  "/api/users";
 
 export default {
     namespaced: true,
@@ -35,14 +34,14 @@ export default {
             context.commit("setTotalCount", 0)
         },
         async getProfile(context, data) {
-            let response = await context.rootState.$server.request( PROFILE_URL, data, 'GET', { "x-app-token": "some-token" } )
+            let response = await context.rootState.$server.request( PROFILE, data, 'GET' )
             if (response.status == 401 ) {
-                context.commit("logout", null, { root: true })
+                context.dispatch("logout", null, { root: true })
             }
             return response
         },
         async saveProfile(context, data) {
-            return await context.rootState.$server.request( PROFILE_URL, data, 'PUT' )
+            return await context.rootState.$server.request( PROFILE, data, 'PATCH' )
         },
         async loadUserList(context, data) {
             let limit = (data.page) ? (data.page - 1 ) : 0
@@ -53,7 +52,7 @@ export default {
                 "offset": limit,
                 "order_by": order_by,  
             }
-            let response = await context.rootState.$server.request( USERS_LIST, request, 'GET' )
+            let response = await context.rootState.$server.request( USERS, request, 'GET' )
             if (response.status == 200) {
                 context.commit("setTotalCount", await response.data.count)
                 context.commit("setUserList", await response.data.users)
@@ -67,7 +66,7 @@ export default {
             let request = Object.assign({}, data)
             request.user_uuid = request.uuid
             request.is_active = request.is_active ? 1 : 0; 
-            let response = await context.rootState.$server.request( USER_UPDATE + '/' + request.uuid, request, 'PUT' )
+            let response = await context.rootState.$server.request( `${USERS}/${request.uuid}`, request, 'PATCH' )
             if (response.status == 200) {
                 context.commit("updateUser", data)
             }

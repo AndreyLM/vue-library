@@ -1,0 +1,29 @@
+    -users_list
+    -users_update
+
+    -roles_list
+    -roles_create
+    -roles_update
+    -roles_delete
+
+
+    {} -articles_list 
+    {} -articles_delete
+    {1} -articles_create
+    {} -articles_update
+    {} -articles_import
+
+    // {} -articles => 1
+
+    {} -articles_list 
+    {} -articles_delete
+    {} -articles_create
+    {} -articles_update
+    {} -articles_import
+
+    // {1} -articles => 0
+
+
+[ "articles",  ]
+
+
