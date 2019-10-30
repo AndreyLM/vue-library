@@ -8,7 +8,7 @@ export default [
         name: 'profile',
         component: Profile,
         beforeEnter(to, from, next) {
-            if (!store.state.authenticated) {
+            if (store.state.authenticated) {
                 next()
                 return
             } 
