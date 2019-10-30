@@ -9,7 +9,7 @@
           v-if="$store.getters.accessAny(...item.permissions)"
           :key="index"
       )
-        v-subheader {{ item.subheader }}
+        v-subheader {{ $t(item.subheader) }}
         
         v-list-item(
           v-for="el, ind in item.items"
@@ -20,7 +20,7 @@
           v-list-item-icon
             v-icon {{ el.icon }}
           v-list-item-content
-            v-list-item-title  {{ el.title }}
+            v-list-item-title  {{ $t(el.title) }}
 
 </template>
 

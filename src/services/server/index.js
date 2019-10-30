@@ -4,15 +4,19 @@ export default class  Server {
     constructor(baseUrl, localStorageTokenKey) {
         this.tokenStorageKey = localStorageTokenKey
         this.baseUrl = baseUrl
-        this.token = localStorage.getItem(localStorageTokenKey)
+
         let userString = localStorage.getItem(localStorageTokenKey + "user") 
         this.user = userString ? JSON.parse(userString) : {}
-        this.testAuthURL = '/api/check-auth'
-        this.testLogoutURL = '/api/logout'
+        this.token = localStorage.getItem(localStorageTokenKey)
+        this.locale = localStorage.getItem(localStorageTokenKey + "locale")
     }
 
     getUser() {
         return this.user
+    }
+
+    getLocale() {
+        return this.locale
     }
 
     setUser(user) {
@@ -25,23 +29,22 @@ export default class  Server {
         localStorage.setItem(this.tokenStorageKey, token)
     }
 
-    testAuth() {
-        let self = this
-        return self.request(self.testAuthURL, {})
+    setLocale(locale) {
+        this.locale = locale
+        localStorage.setItem(this.tokenStorageKey + "locale", locale)
     }
 
     logout() {
         this.token = null
+        localStorage.clear()
     }
 
     async request( url, data, method, custom_headers ) {
-        console.log(url)
-
         if (!url || typeof url != 'string') return { status: 400, msg: `Invalid url: ${url}` }
         let self = this
         method = method || 'GET'
         data = data || {}
-       
+
         let Uri = self.baseUrl + ( url[0]!='/'? '/' : '') + url
         
         let hds = self.headers()
@@ -55,8 +58,10 @@ export default class  Server {
 
         switch (method) {
             case "PUT":
+            case "PATCH":
             case 'POST':
-                packet.data = JSON.stringify(data)
+                packet.data =  data
+                // packet.data =  JSON.stringify(data)
                 break
             case 'GET':
                 packet.params = data

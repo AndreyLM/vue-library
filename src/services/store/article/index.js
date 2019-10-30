@@ -1,4 +1,6 @@
 const ARTICLES = "/api/descriptions"
+const IMPORT = "/api/upload-document"
+const LANGUAGES = "/api/languages"
 
 export default {
     namespaced: true,
@@ -6,6 +8,7 @@ export default {
         descriptionList: [],
         page: 0,
         totalCount: 0,
+        languages: [],
     },
     mutations: {
         setRegisterList(state, data) {
@@ -16,6 +19,9 @@ export default {
         },
         setTotalCount(state, data) {
             state.totalCount = data
+        },
+        setLanguages(state, data) {
+            state.languages = data.languages || []
         }
     },
     actions: {
@@ -37,6 +43,13 @@ export default {
         },
         async create(context, data) {
             return await context.rootState.$server.request( ARTICLES, data, 'POST' )
+        },
+        async upload(context, data) {
+            return await context.rootState.$server.request( IMPORT, data, 'POST', { 'Content-Type': 'multipart/form-data' } )
+        },
+        async loadLanguages(context) {
+            let resp = await context.rootState.$server.request( LANGUAGES, {}, 'GET' )
+            resp.status == 200 && context.commit("setLanguages", resp.data)
         }
     }
 }

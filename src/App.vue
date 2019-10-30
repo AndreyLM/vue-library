@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     layout() {
-      return this.$store.getters.layout
+      return this.$store.state.layout
     }
   }
   

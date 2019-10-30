@@ -2,6 +2,8 @@ import Profile from "@/components/user/Profile"
 import UserList from "@/components/user/List"
 import store from "../../store";
 
+const USERS_PERMISSIONS = ["users"]
+
 export default [
     {
         path: '/profile',
@@ -20,7 +22,7 @@ export default [
         name: 'users',
         component: UserList,
         beforeEnter(to, from, next) {
-            if (store.state.user.permissions.includes("roles")) {
+            if (store.getters.accessAny(...USERS_PERMISSIONS)) {
                 next()
                 return
             } 
