@@ -17,7 +17,7 @@
                 label="Language"
                 v-model="article.language"
                 :items="languages"
-                item-text="title"
+                item-text="translation"
                 item-value="name"
                 @input="!$v.article.language.$dirty && $v.article.language.$touch()"
                 @blur="!$v.article.language.$dirty && $v.article.language.$touch()"
