@@ -6,7 +6,7 @@
             v-text-field(
                 name="code",
                 label="Code",
-                type="text"
+                type="number"
                 v-model="article.code"
                 @input="!$v.article.code.$dirty && $v.article.code.$touch()"
                 @blur="!$v.article.code.$dirty && $v.article.code.$touch()"
