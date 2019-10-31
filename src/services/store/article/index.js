@@ -22,6 +22,9 @@ export default {
         },
         setLanguages(state, data) {
             state.languages = data
+        },
+        deleteLanguage(state, data) {
+            state.languages = state.languages.filter( el => el.id !== data ) 
         }
     },
     actions: {
@@ -54,6 +57,13 @@ export default {
             let response = await context.rootState.$server.request( LANGUAGES, {}, 'GET' )
             response.status == 200 && context.commit("setLanguages", response.data.languages)
             return response
+        },
+        async deleteLanguage(context, id) {
+            let resp =  await context.rootState.$server.request( `${LANGUAGES}/${id}`, {}, 'DELETE' )
+            if ( resp.status == 200) {
+                context.commit("deleteLanguage", id)
+            }
+            return resp
         }
     }
 }

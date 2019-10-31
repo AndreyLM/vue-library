@@ -7,6 +7,9 @@ Vue.use(FlagIcon)
 
 const messages = {
     'en': {
+        buttons: {
+            add: "Add",
+        },
         siteName: "Library", 
         administration: "Administration",
         users: "Users",
@@ -21,6 +24,9 @@ const messages = {
         } 
     },
     'uk': {
+        buttons: {
+            add: "Додати",
+        },
         siteName: "Бібліотека", 
         administration: "Управління",
         users: "Користувачі",

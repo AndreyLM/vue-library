@@ -78,7 +78,8 @@ export default class  Server {
 
     headers() {
         return {
-            'Cache-Control': 'no-cache', 
+            'Cache-Control': 'no-cache',
+            'X-Language': this.locale || '', 
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + this.token, 
         }
