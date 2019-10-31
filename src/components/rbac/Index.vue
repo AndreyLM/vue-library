@@ -24,7 +24,17 @@
                                 :error-messages="$v.role_name.$dirty && !$v.role_name.required ? [ 'The field is required' ] : []"
                             )
 
-                        v-card-actions
+                        
+                        v-col.text-center(v-if="requestLoading")
+                            v-progress-circular(
+                                :size="60"
+                                :width="7"
+                                color="purple"
+                                indeterminate
+                            )
+                        v-card-actions(
+                            v-else
+                        )
                             v-spacer
                             v-btn(
                                 color="blue darken-1" 
@@ -46,20 +56,29 @@
                         v-card-title
                             span.headline Delete Role {{ `"${delete_role.name}"` }}?
                         v-card-text
-                            
-                        v-card-actions
+                        
+                        v-col.text-center(v-if="requestLoading")
+                            v-progress-circular(
+                                :size="60"
+                                :width="7"
+                                color="purple"
+                                indeterminate
+                            )
+                        v-card-actions(
+                            v-else
+                        )
                             v-spacer
-                            v-btn(
-                                color="blue darken-1" 
-                                text 
-                                @click="closeDelete"
-                            ) Cancel
                             v-btn(
                                 color="blue darken-1" 
                                 text 
                                 @click="saveDelete"
                             ) OK
                             v-spacer
+                            v-btn(
+                                color="blue darken-1" 
+                                text 
+                                @click="closeDelete"
+                            ) Cancel
 
                 v-row
                     v-col(cols="4")
@@ -140,6 +159,7 @@ export default {
             role_name: "",
             delete_role: { name: "", uuid: "" },
             loading: false,
+            requestLoading: false,
             selectedRoleUUID: "",
             selectedRolePermissions: [],
         }
@@ -202,6 +222,7 @@ export default {
             this.dialog_delete = false
         },
         async saveNew() {
+            this.requestLoading = true
             this.$v.$touch()
             if( this.$v.$invalid ) {
                 this.$notify({
@@ -224,9 +245,11 @@ export default {
                     text: resp.message || "Undefined",
                     type: ( resp.status == 200 ) ? "success" : "error",
                 })
+            this.requestLoading = false
             this.dialog_new = false
         },
         async saveDelete() {
+            this.requestLoading = true
             let resp = await this.$store.dispatch("rbac/deleteRole", { uuid: this.delete_role.uuid })
             if ( resp.status == 200 ) {
                 // TODO neet to get role from response
@@ -239,6 +262,7 @@ export default {
                     text: resp.message || "Undefined",
                     type: ( resp.status == 200 ) ? "success" : "error",
                 })
+            this.requestLoading = false
             this.dialog_delete = false
         },
     },
