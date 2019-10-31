@@ -21,7 +21,7 @@ export default {
             state.totalCount = data
         },
         setLanguages(state, data) {
-            state.languages = data.languages || []
+            state.languages = data
         }
     },
     actions: {
@@ -51,8 +51,9 @@ export default {
             return await context.rootState.$server.request( IMPORT, data, 'POST', { 'Content-Type': 'multipart/form-data' } )
         },
         async loadLanguages(context) {
-            let resp = await context.rootState.$server.request( LANGUAGES, {}, 'GET' )
-            resp.status == 200 && context.commit("setLanguages", resp.data)
+            let response = await context.rootState.$server.request( LANGUAGES, {}, 'GET' )
+            response.status == 200 && context.commit("setLanguages", response.data.languages)
+            return response
         }
     }
 }

@@ -12,11 +12,13 @@
                 @blur="!$v.article.code.$dirty && $v.article.code.$touch()"
                 :error-messages="codeErrors()"
             )
-            v-text-field(
-                name="language",
-                label="Language",
-                type="text"
+            v-select(
+                name="language"
+                label="Language"
                 v-model="article.language"
+                :items="languages"
+                item-text="title"
+                item-value="name"
                 @input="!$v.article.language.$dirty && $v.article.language.$touch()"
                 @blur="!$v.article.language.$dirty && $v.article.language.$touch()"
                 :error-messages="languageErrors()"
@@ -61,7 +63,7 @@ import { required } from 'vuelidate/lib/validators'
 
 export default { 
     name: "article-form",
-    props: [ "is_new",  "article" ],
+    props: [ "is_new",  "article", "languages" ],
     data: () => {
         return {
 

@@ -21,6 +21,7 @@
                         article-form(
                             :article="editedItem"
                             :is_new="is_new"
+                            :languages="languages"
                             @submitArticle="submitArticle"
                             @cancelArticle="cancelArticle"
                         )
@@ -109,6 +110,7 @@ export default {
     }, 
     computed: {
         ...mapState({
+            languages: state => state.article.languages,
             articles: state => state.article.descriptionList,
             totalCount: state => state.article.totalCount,
         })
@@ -141,6 +143,7 @@ export default {
     },
     mounted() {
         // this.$store.dispatch("description_manager/loadDescriptionList", this.options) 
+        !this.languages.length && this.$store.dispatch("article/loadLanguages")
     }
 }
 
