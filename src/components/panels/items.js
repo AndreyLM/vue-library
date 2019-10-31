@@ -1,37 +1,37 @@
 export default [
     {
-        subheader: "Administration",
+        subheader: "administration",
         permissions: [ "roles", "users" ],
         items: [
            {
                 permission: "users",
                 link: "/users",
                 icon: "supervised_user_circle",
-                title: "Users",
+                title: 'users',
            }, 
            {
                 permission: "roles",
                 link: "/rbac",
                 icon: "security",
-                title: "RBAC",
+                title: "rbac",
            }, 
         ]
     },
     {
-        subheader: "Articles",
+        subheader: "article.articles",
         permissions: [ "descriptions" ],
         items: [
            {
                 permission: "descriptions_list",
                 link: "/articles",
                 icon: "library_books",
-                title: "Articles",
+                title: "article.articles",
            }, 
            {
                 permission: "descriptions_upload",
-                link: "/upload",
-                icon: "import_export",
-                title: "Import",
+                link: "/settings",
+                icon: "settings",
+                title: "article.settings",
            }, 
         ]
     },

@@ -66,6 +66,7 @@ export default {
             let request = Object.assign({}, data)
             request.user_uuid = request.uuid
             request.is_active = request.is_active ? 1 : 0; 
+            console.log(request)
             let response = await context.rootState.$server.request( `${USERS}/${request.uuid}`, request, 'PATCH' )
             if (response.status == 200) {
                 context.commit("updateUser", data)

@@ -1,16 +1,18 @@
-import ArticleUpload from "@/components/article/Upload"
+import Settings from "@/components/article/Settings"
 import List from "@/components/article/List"
 
 import store from "../../store";
 
+const SETTINGS_PERMISSIONS = ["descriptions_upload"]
+const ARTICLE_PERMISSIONS = ["descriptions_list"]
 
 export default [
     {
-        path: '/upload',
-        name: 'upload',
-        component: ArticleUpload,
+        path: '/settings',
+        name: 'settings',
+        component: Settings,
         beforeEnter(to, from, next) {
-            if (store.getters.accessAny("descriptions_upload")) {
+            if (store.getters.accessAny(...SETTINGS_PERMISSIONS)) {
                     next()
                     return
             } 
@@ -22,7 +24,7 @@ export default [
         name: 'articles',
         component: List,
         beforeEnter(to, from, next) {
-            if (store.getters.accessAny("descriptions_list")) {
+            if (store.getters.accessAny(...ARTICLE_PERMISSIONS)) {
                     next()
                     return
             } 

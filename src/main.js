@@ -8,13 +8,17 @@ import Fragment from 'vue-fragment'
 import store from './services/store'
 import router from './services/router'
 import Vuelidate from 'vuelidate'
-import VueAxios from '@/plugins/axios'
 import Server from './services/server'
+
+import i18n from '@/plugins/i18n'
 
 let s = new Server(process.env.VUE_APP_SERVER_URL || '', process.env.VUE_APP_TOKEN_NAME || "vue-app")
 store.commit("SetServer", s)
-store.dispatch("initApp").then( () => { initalizeVue() } ).catch( err => {
-    console.log(err)
+store.dispatch("initApp").then( () => { 
+    i18n.locale = store.state.current_locale
+    initalizeVue() } ).catch( err => {
+    // console.log(err)
+    i18n.locale = store.state.current_locale
     initalizeVue()
   }
 )
@@ -25,7 +29,6 @@ Vue.use(Notifications)
 Vue.use(require('vue-moment'))
 Vue.use(Fragment.Plugin)
 Vue.use(Vuelidate)
-Vue.use(VueAxios)
 
 function initalizeVue()
 {
@@ -33,6 +36,7 @@ function initalizeVue()
     vuetify,
     store,
     router,
+    i18n,
     render: h => h(App),
     beforeCreate() {
         !this.$store.state.authenticated && this.$router.push( { path: "/login" }) 

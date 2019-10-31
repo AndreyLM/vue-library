@@ -1,7 +1,7 @@
 <template lang="pug">
     v-app-bar(app)
       v-app-bar-nav-icon(@click="drawerClick")
-      v-toolbar-title Study App
+      v-toolbar-title {{ $t('siteName') }}
       v-spacer
       v-toolbar-items
         v-menu(
@@ -19,6 +19,21 @@
             ) 
               v-icon account_circle 
               | {{ user.login }}
+
+            v-btn(
+              text
+              v-for="ln in languages"
+              :key="ln.flag"
+              @click="changeLocate(ln.language)"
+            ) 
+              flag(
+                @click="changeLocate(ln.language)"
+                v-bind:squared=false
+                :iso="ln.flag"
+              ) {{ ln.title }}
+            
+          
+          
           v-flex(
               xs12
             )
@@ -32,7 +47,7 @@
                     class="pa-6"
                   )
                     v-icon folder_shared
-                    | Profile 
+                    | {{ $t('profile') }} 
                   v-btn(
                     text 
                     to="/logout"
@@ -40,12 +55,12 @@
                     class="pa-6"
                   )
                     v-icon exit_to_app
-                    | Logout
+                    | {{ $t('logout') }} 
                  
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
     props: [ "initialDrawer" ],
@@ -57,14 +72,20 @@ export default {
     methods: {
         logout() {
             this.$store.dispatch("logout")
-            this.$router.push({path: '/login'})
+            // this.$router.push({path: '/login'})
         },
         drawerClick() {
             this.$emit("drawerClick")
         },
+        changeLocate(locale) {
+          this.$store.commit("SetLocale", locale)
+        }
     },
     computed: {
-        ...mapGetters({ user: "user" }),
+      ...mapState({ 
+        user: "user",
+        languages: "languages",
+      }),
     }
 }
 </script>

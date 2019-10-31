@@ -3,9 +3,11 @@ import Vuex from "vuex";
 import Article from "./article";
 import UserModule from "./user";
 import RBAC from "./rbac"
+import i18n from '@/plugins/i18n';
 
 const LOGIN = "/api/login"
 const REGISTRATION = "/api/registration"
+const CHECK_AUTH = "/api/check-auth"
 
 Vue.use(Vuex);
 
@@ -14,19 +16,18 @@ export default new Vuex.Store({
     modules: { user_manager: UserModule, article: Article, rbac: RBAC },
     state: {
         $server: {},
+        languages: [
+            { flag: 'us', language: 'en', title: 'English' },
+            { flag: 'ua', language: 'uk', title: 'Українська' }
+        ],
+        current_locale: 'uk',
         layout: 'clean-layout',
         authenticated: false,
         loading: true,
         user: {},
     },
     getters: {
-        layout(state) {
-            return state.layout
-        },
-        user(state) {
-            return state.user
-        },
-        permissions(state) {
+         permissions(state) {
             return state.user.permissions || []
         },
         accessAny: state  => (...data ) => {
@@ -42,9 +43,13 @@ export default new Vuex.Store({
     },
     mutations: {
         SetUser(state, data) {
-            console.log("setuser")
             state.user = data
             state.$server.setUser(data)
+        },
+        SetLocale(state, data) {
+            i18n.locale = data
+            state.current_locale = data
+            state.$server.setLocale(data)
         },
         SetUserPermissions(state, data){
             state.user_permissions = data || []
@@ -61,17 +66,21 @@ export default new Vuex.Store({
         SetAuthenticated(state, val) {
             state.authenticated = val
             state.layout = (val) ? 'app-layout' : 'clean-layout'  
+        },
+        _serverLogout(state) {
+            state.$server.logout()
         }
     },
     actions: {
         async initApp( context ) {
-            let data = await context.rootState.$server.testAuth()
+            let data = await context.rootState.$server.request(CHECK_AUTH, {}, 'GET')
             if ( data.status != 200 ) {
                 context.dispatch("logout")
                 return false
             } 
             context.commit('SetAuthenticated', true )
             context.commit('SetUser', context.rootState.$server.getUser() || {} )
+            context.commit('SetLocale', context.rootState.$server.getLocale() || "uk" )
             
             return true
         },
@@ -89,6 +98,7 @@ export default new Vuex.Store({
             commit('SetAuthenticated', false)
             commit('SetServerToken', '')
             commit('SetUser', {})
+            commit('_serverLogout')
             commit('user_manager/setUserList', [])
             commit('rbac/setRoles', [])
             commit('rbac/setPermissions', [])

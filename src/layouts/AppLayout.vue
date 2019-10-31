@@ -10,7 +10,7 @@
     )  
         
     v-content
-      v-container.fluid.fill-height
+      v-container.fluid
         notifications(width="50%" position='top center' group="alerts")
         router-view
         
@@ -18,7 +18,7 @@
 
 <script>
 
-import { mapGetters } from "vuex"
+import { mapState } from "vuex"
 import TopPanel from '@/components/panels/TopPanel'
 import SidePanel from '@/components/panels/SidePanel'
 
@@ -34,14 +34,22 @@ export default {
     SidePanel
   },
   computed: {
-    ...mapGetters({
-      user: "user"
+    ...mapState({
+      user: "user",
     })
   },
   methods: {
     changeDrawer() {
       this.drawer = !this.drawer
     }
+  },
+  created() {
+    let vm = this
+    this.$store.subscribe((mutation) => {
+      if( mutation.type === "SetAuthenticated") {
+        !mutation.payload && vm.$router.push("/login")
+      }
+    });
   }
 }
 </script>
