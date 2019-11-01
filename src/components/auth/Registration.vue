@@ -3,7 +3,7 @@
         v-flex.sm12.md10
             v-card.elevation-12
                 v-toolbar.dark(color="primary")
-                    v-toolbar-title Registration
+                    v-toolbar-title {{ $t('form.title.registration') }}
                     v-spacer
                 v-card-text
                     v-form
@@ -16,7 +16,7 @@
                                 v-text-field(
                                     prepend-icon="lock",
                                     name="password",
-                                    label="Password",
+                                    :label=" $t('form.label.password') ",
                                     type="password",
                                     v-model="password"
                                     :counter="6"
@@ -29,7 +29,7 @@
                                 v-text-field(
                                     prepend-icon="lock",
                                     name="confirm_password",
-                                    label="Confirm Password",
+                                    :label=" $t('form.label.confirmPassword') ",
                                     type="password",
                                     v-model="confirm_password"
                                     :counter="6"
@@ -38,17 +38,17 @@
                                     :error-messages="confirmPasswordErrors"
                                     required
                                 )
-               
+
                 v-card-actions
                     v-spacer
                     v-btn(
                         color="default",
                         @click.prepend="toLogin"
-                    ) Login
+                    ) {{ $t('buttons.login') }}
                     v-btn(
                         color="primary",
                         @click.prepend="registration"
-                    ) registration
+                    ) {{ $t('buttons.registration') }}
                     v-spacer
 
 </template>
@@ -86,16 +86,16 @@ export default {
         passwordErrors() {
             const errors = []
             if (!this.$v.password.$dirty) return errors
-            !this.$v.password.minLength && errors.push('Password must be at least 6 characters long')
-            !this.$v.password.required && errors.push('Password is required.')
+            !this.$v.password.minLength && errors.push( this.$tc('errors.minLength', 6) )
+            !this.$v.password.required && errors.push( this.$t('errors.required') )
             return errors
         },
         confirmPasswordErrors() {
             const errors = []
             if (!this.$v.password.$dirty) return errors
-            !this.$v.confirm_password.minLength && errors.push('Confirm password must be at least 6 characters long')
-            !this.$v.confirm_password.required && errors.push('Confirm password is required.')
-            this.confirm_password != this.password && errors.push('Confirm password not equal the password')
+            !this.$v.confirm_password.minLength && errors.push( this.$tc('errors.minLength', 6) )
+            !this.$v.confirm_password.required && errors.push( this.$t('errors.required') )
+            this.confirm_password != this.password && errors.push( this.$t('errors.equal') )
             return errors
         },
     },
@@ -106,8 +106,8 @@ export default {
             if( this.$v.$invalid) {
                 this.$notify({
                     group: "alerts",
-                    title: "Wrong data",
-                    text: "Please enter valid data",
+                    title: this.$t('alert.title'),
+                    text: this.$t('alert.text'),
                     type: 'error',
                 })
                 return

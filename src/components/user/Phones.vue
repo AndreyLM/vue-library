@@ -1,14 +1,14 @@
 <template lang="pug">
     v-card
         v-toolbar.dark(color="default")
-            v-toolbar-title 
+            v-toolbar-title
                  v-icon phone
-                 | Phones  
+                 | {{ $t('form.title.phones') }}
             v-spacer
         v-card-text
             v-row.wrap.align-center(
                  v-if="errorSummary"
-            )  
+            )
                 v-col(
                     cols=12
                 )
@@ -23,7 +23,7 @@
                 )
                     v-text-field(
                         name="phone[]",
-                        label="phone",
+                        :label=" $t('form.label.phone') ",
                         type="text"
                         v-model="phones[index]"
                         v-mask="mask"
@@ -43,13 +43,13 @@
             v-btn(
                 color="default",
                 @click.prepend="add"
-            ) Add
+            ) {{ $t('buttons.add') }}
             v-btn(
                 color="primary",
                 @click.prepend="clear"
-            ) Clear
-                   
-                       
+            ) {{ $t('buttons.clear') }}
+
+
 
 </template>
 
@@ -80,7 +80,7 @@ export default {
             return !this.v.phones.required || !this.v.phones.maxLength
         },
         errorSummaryMessage() {
-            return !this.v.phones.required ? 'One phone number is required' : !this.v.phones.maxLength ? 'Too many phone numbers': ''
+            return !this.v.phones.required ? this.$t('errors.required') : !this.v.phones.maxLength ? this.$t('errors.maxLength.phone') : ''
         },
     },
     methods: {

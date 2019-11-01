@@ -3,7 +3,7 @@
         v-flex.sm12.md10
             v-card.elevation-12
                 v-toolbar.dark(color="primary")
-                    v-toolbar-title User Profile
+                    v-toolbar-title {{ $t('form.title.user.profile') }}
                     v-spacer
                 v-card-text
                     v-form
@@ -13,11 +13,11 @@
                             v-col(
                                 cols="12"
                             )
-                                span User:
+                                span {{ $t('form.label.user') }}:
                                 v-text-field(
                                     prepend-icon="lock",
                                     name="password",
-                                    label="Password",
+                                    :label=" $t('form.label.password') ",
                                     type="password",
                                     v-model="password"
                                     :counter="6"
@@ -26,8 +26,8 @@
                                     :error-messages="passwordErrors"
                                     required
                                 )
-                            
-               
+
+
                 v-card-actions
                     v-spacer
                     v-btn(
@@ -74,8 +74,8 @@ export default {
         passwordErrors() {
             const errors = []
             if (!this.$v.password.$dirty) return errors
-            !this.$v.password.minLength && errors.push('Password must be at least 6 characters long')
-            !this.$v.password.required && errors.push('Password is required.')
+            !this.$v.password.minLength && errors.push( this.$tc('errors.minLength', 6) )
+            !this.$v.password.required && errors.push( this.$t('errors.required') )
             return errors
         },
     },
@@ -88,8 +88,8 @@ export default {
                 console.log(this.$v)
                 this.$notify({
                     group: "alerts",
-                    title: "Wrong data",
-                    text: "Please enter valid data",
+                    title: this.$t('alert.title'),
+                    text: this.$t('alert.text'),
                     type: 'error',
                 })
                 return
@@ -105,7 +105,7 @@ export default {
                 title: resp.status,
                 text: resp.message,
                 type: ( resp.status == 200 ) ? "success" : "error",
-            })  
+            })
             // this.$router.push({ path: '/' })
         },
     },
@@ -121,7 +121,7 @@ export default {
                 title: "status: " + resp.status + " Code: " + ( resp.code || "" ),
                 text: resp.message,
                 type: 'error',
-            })  
+            })
         }
     }
 }

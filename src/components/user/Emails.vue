@@ -1,14 +1,14 @@
 <template lang="pug">
     v-card
         v-toolbar.dark(color="default")
-            v-toolbar-title 
+            v-toolbar-title
                  v-icon email
-                 | Emails  
+                 | {{ $t('form.title.emails') }}
             v-spacer
         v-card-text
             v-row.wrap.align-center(
                  v-if="errorSummary"
-            )  
+            )
                 v-col(
                     cols=12
                 )
@@ -17,14 +17,14 @@
                     ) {{ errorSummaryMessage }}
             v-row.wrap.align-center(
                 v-for="(email, index) in emails" :key="index"
-            )   
-               
+            )
+
                 v-col(
                     cols=10
                 )
                     v-text-field(
                         name="email[]",
-                        label="email",
+                        :label=" $t('form.label.email') ",
                         type="text"
                         v-model="emails[index]"
                         :key="index"
@@ -33,7 +33,7 @@
                     )
                 v-col(
                     cols=2
-                ) 
+                )
                     a.text-center.justify-center(
                         @click.prevent="remove(index)"
                     ) X
@@ -43,13 +43,13 @@
                 v-if="v.emails.maxLength"
                 color="default",
                 @click.prepend="add"
-            ) Add
+            ) {{ $t('buttons.add') }}
             v-btn(
                 color="primary",
                 @click.prepend="clear"
-            ) Clear
-                   
-                       
+            ) {{ $t('buttons.clear') }}
+
+
 
 </template>
 
@@ -71,7 +71,7 @@ export default {
             return !this.v.emails.required || !this.v.emails.maxLength
         },
         errorSummaryMessage() {
-            return !this.v.emails.required ? 'One email is required' : !this.v.emails.maxLength ? 'Too many emails': ''
+            return !this.v.emails.required ? this.$t('errors.required') : !this.v.emails.maxLength ? this.$t('errors.maxLength.email') : ''
         },
     },
     methods: {

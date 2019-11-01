@@ -5,7 +5,7 @@
         v-card-text
             v-text-field(
                 name="code",
-                label="Code",
+                :label=" $t('form.label.code') ",
                 type="number"
                 v-model="article.code"
                 @input="!$v.article.code.$dirty && $v.article.code.$touch()"
@@ -14,7 +14,7 @@
             )
             v-select(
                 name="language"
-                label="Language"
+                :label=" $t('form.label.language') "
                 v-model="article.language"
                 :items="languages"
                 item-text="translation"
@@ -25,7 +25,7 @@
             )
             v-text-field(
                 name="title",
-                label="Title",
+                :label=" $t('form.label.title') ",
                 type="text"
                 v-model="article.title"
                 @input="!$v.article.title.$dirty && $v.article.title.$touch()"
@@ -34,7 +34,7 @@
             )
             v-textarea(
                 name="description",
-                label="Description",
+                :label=" $t('form.label.description') ",
                 type="text"
                 v-model="article.description"
                 @input="!$v.article.description.$dirty && $v.article.description.$touch()"
@@ -44,15 +44,15 @@
         v-card-actions
             v-spacer
             v-btn(
-                color="blue darken-1" 
-                text 
+                color="blue darken-1"
+                text
                 @click="cancel"
-            ) Cancel
+            ) {{ $t('buttons.cancel') }}
             v-btn(
-                color="blue darken-1" 
-                text 
+                color="blue darken-1"
+                text
                 @click="save"
-            ) Save
+            ) {{ $t('buttons.save') }}
             v-spacer
 
 </template>
@@ -61,7 +61,7 @@
 
 import { required } from 'vuelidate/lib/validators'
 
-export default { 
+export default {
     name: "article-form",
     props: [ "is_new",  "article", "languages" ],
     data: () => {
@@ -71,7 +71,7 @@ export default {
     },
     computed: {
         card_title: function() {
-            return ( this.is_new ) ? "New article" : "Update article"   
+            return ( this.is_new ) ? "New article" : "Update article"
         }
     },
     validations() {
@@ -80,7 +80,7 @@ export default {
                 id: ( this.is_new ) ? { } : { required },
                 code: { required },
                 language: { required },
-                title: { required },                
+                title: { required },
                 description: { required },
             }
         }
@@ -89,25 +89,25 @@ export default {
         codeErrors() {
             const errors = []
             if (!this.$v.article.code.$dirty) return errors
-            !this.$v.article.code.required && errors.push('Code is required.')
+            !this.$v.article.code.required && errors.push( this.$t('errors.required') )
             return errors
         },
         languageErrors() {
             const errors = []
             if (!this.$v.article.language.$dirty) return errors
-            !this.$v.article.language.required && errors.push('language is required.')
+            !this.$v.article.language.required && errors.push( this.$t('errors.required') )
             return errors
         },
         titleErrors() {
             const errors = []
             if (!this.$v.article.title.$dirty) return errors
-            !this.$v.article.title.required && errors.push('title is required.')
+            !this.$v.article.title.required && errors.push( this.$t('errors.required') )
             return errors
         },
         descriptionErrors() {
             const errors = []
             if (!this.$v.article.description.$dirty) return errors
-            !this.$v.article.description.required && errors.push('description is required.')
+            !this.$v.article.description.required && errors.push( this.$t('errors.required') )
             return errors
         },
         async save() {
@@ -115,8 +115,8 @@ export default {
             if( this.$v.$invalid ) {
                 this.$notify({
                     group: "alerts",
-                    title: "Wrong data",
-                    text: "Please enter valid data",
+                    title: this.$t('alert.title'),
+                    text: this.$t('alert.text'),
                     type: 'error',
                 })
                 return
@@ -128,7 +128,7 @@ export default {
                 title: resp.status,
                 text: resp.message,
                 type: ( resp.status == 200 ) ? "success" : "error",
-            })  
+            })
             this.$v.article.$reset()
             this.$emit("submitArticle")
         },
