@@ -19,11 +19,15 @@ export default {
         async loadRoles(context) {
             let response = await context.rootState.$server.request( ROLES, {}, 'GET' )
             response.status == 200 && context.commit("setRoles", response.data.roles)
+            response.status == 401 && context.dispatch("logout")
+
             return response
         },
         async loadPermissions(context) {
             let response = await context.rootState.$server.request( PERMISSIONS, {}, 'GET' )
             response.status == 200 && context.commit("setPermissions", response.data.permissions) 
+            response.status == 401 && context.dispatch("logout")
+
             return response
         },
         async getRolePermissions(context, data) {

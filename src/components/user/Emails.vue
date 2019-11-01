@@ -43,7 +43,7 @@
                 v-if="v.emails.maxLength"
                 color="default",
                 @click.prepend="add"
-            ) Add
+            ) {{ $t("buttons.add" )}}
             v-btn(
                 color="primary",
                 @click.prepend="clear"

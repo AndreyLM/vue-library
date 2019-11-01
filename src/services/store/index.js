@@ -107,6 +107,9 @@ export default new Vuex.Store({
             commit('SetServerToken', token)
             commit('SetUser', user)
             commit('SetAuthenticated', true)
+        },
+        checkRequest(context, response) {
+            response.status == 401 && context.dispatch("logout")
         }
     }
 })

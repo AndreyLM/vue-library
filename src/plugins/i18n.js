@@ -38,6 +38,9 @@ const messages = {
             articles: "Статті",
             import: "Імпорт",
             languages: "Мови статтей"
+        },
+        errors: {
+            
         }  
     },
 }

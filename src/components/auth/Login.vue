@@ -25,7 +25,7 @@
                             v-model="password"
                             @input="$v.password.$touch()"
                             @blur="$v.password.$touch()"
-                            :error-messages="$v.password.$dirty && !$v.password.required ? [ 'The field is required' ] : !$v.password.minLength ? ['Min length must be 5 symbols'] : []"
+                            :error-messages="passwordErrors"
                         )
                 v-card-actions
                     v-spacer

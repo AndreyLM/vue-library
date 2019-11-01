@@ -25,6 +25,17 @@ export default {
         },
         deleteLanguage(state, data) {
             state.languages = state.languages.filter( el => el.id !== data ) 
+        },
+        saveLanguage(state, data) {
+            let ln = data.language
+            !data.edit && state.languages.push(ln)
+            data.edit && state.languages.forEach( el => {
+                if ( el.id == ln.id ) {
+                    el.name = ln.name
+                    el.title = ln.title
+                    el.translation = ln.translation
+                }
+            })
         }
     },
     actions: {
@@ -39,22 +50,30 @@ export default {
                 "search": data.search || "",  
             }
             let response = await context.rootState.$server.request( ARTICLES, request, 'GET' )
+            response.status == 401 && context.dispatch("logout")
             response.status == 200 && context.commit("setTotalCount", response.data.count) 
             response.status == 200 && context.commit("setRegisterList", await response.data.models) 
                 
             return response.data.totalCount || false
         },
         async create(context, data) {
-            return await context.rootState.$server.request( ARTICLES, data, 'POST' )
+            let response = await context.rootState.$server.request( ARTICLES, data, 'POST' ) 
+            response.status == 401 && context.dispatch("logout")
+            return response
         },
         async update(context, data) {
-            return await context.rootState.$server.request( ARTICLES + '/' + data.uuid, data, 'PUT' )
+            let response = await context.rootState.$server.request( ARTICLES + '/' + data.uuid, data, 'PUT' ) 
+            response.status == 401 && context.dispatch("logout")
+            return response
         },
         async upload(context, data) {
-            return await context.rootState.$server.request( IMPORT, data, 'POST', { 'Content-Type': 'multipart/form-data' } )
+            let response = await context.rootState.$server.request( IMPORT, data, 'POST', { 'Content-Type': 'multipart/form-data' } ) 
+            response.status == 401 && context.dispatch("logout")
+            return response
         },
         async loadLanguages(context) {
             let response = await context.rootState.$server.request( LANGUAGES, {}, 'GET' )
+            response.status == 401 && context.dispatch("logout")
             response.status == 200 && context.commit("setLanguages", response.data.languages)
             return response
         },
@@ -63,7 +82,21 @@ export default {
             if ( resp.status == 200) {
                 context.commit("deleteLanguage", id)
             }
+            resp.status == 401 && context.dispatch("logout")
+            return resp
+        },
+        async saveLanguage(context, data) {
+            let edit = data.id ? true : false 
+            let url = data.id ? `${LANGUAGES}/${data.id}` : `${LANGUAGES}`
+            let method = data.id ? 'PATCH' : 'POST'
+            let resp =  await context.rootState.$server.request( url, data, method )
+            if ( resp.status == 200) {
+                !edit && ( data.id = resp.data.id )
+                context.commit("saveLanguage", { language: data, edit: edit })
+            }
+            resp.status == 401 && context.dispatch("logout")
             return resp
         }
+
     }
 }

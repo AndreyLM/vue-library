@@ -12,7 +12,13 @@
                     v-model="dialog"
                     max-width="500px"
                 )
-                    
+                    language-form(
+                        :language="language"
+                        :is_new="is_new"
+                        @submitLanguage="submitLanguage"
+                        @cancelLanguage="cancelLanguage"
+                    )
+
                 v-row
                     v-col.elevation-1.mr-auto.ml-auto(
                         cols="12"
@@ -21,10 +27,9 @@
                         h2.font-italic.font-weight-bold {{ $t("article.languages") }}
                         v-spacer
                         v-btn(
-
+                            @click="addLanguage"
                         ) 
                             v-icon(
-
                             ) add
                             | {{ $t('buttons.add')}}
                         v-list-item(
@@ -36,7 +41,7 @@
 
                             v-list-item-content
                                 v-list-item-title(
-                                    v-text="item.title"
+                                    v-text="`${item.title} (${item.translation})`"
                                 ) 
 
                             v-list-item-avatar
@@ -46,7 +51,7 @@
                                 ) X
                                 v-spacer
                                 v-icon(
-                                    @click="editLanguage(item.name)"
+                                    @click="editLanguage(item)"
                                 ) edit
 
                     v-col.elevation-1.mr-auto.ml-auto(
@@ -61,13 +66,10 @@
                             type="file"
                             ref="file"
                         )
-
-                v-card-actions
-                    v-spacer
-                    v-btn(
-                        color="primary",
-                        @click="upload"
-                    ) Upload
+                        v-btn(
+                            color="primary",
+                            @click="upload"
+                        ) Upload
                        
 
 </template>
@@ -75,16 +77,22 @@
 <script>
 
 import { mapState } from "vuex"
+import LanguageForm from "./LanguageForm"
 
 export default {
     name: "upload",
+    components: { LanguageForm },
     data: () => {
         return {
             language: {
                 id: 0,
                 name: "",
                 title: "",
+                translation: "",
             },
+            is_new: false,
+            dialog: false,
+            dialogTitle: "Create Language",
         }
     },
     computed: {
@@ -93,6 +101,7 @@ export default {
         })
     },
     methods: {
+    
         async upload() {
             let formData = new FormData();
             if( !this.$refs.file.files.length ) {
@@ -130,11 +139,21 @@ export default {
                 return
             }
         },
-        editLanguage(name) {
-
+        addLanguage() {
+            this.is_new = true
+            this.language = Object.assign({}, { id: 0, name: "", title: "", translation: "" })
+            this.dialog = true
         },
-        newLanguage() {
-
+        editLanguage(language) {
+            this.is_new = false
+            this.language = Object.assign({}, language)
+            this.dialog = true
+        },
+        cancelLanguage() {
+            this.dialog = false
+        },
+        submitLanguage() {
+            this.dialog = false
         },
     },
     async mounted() {
