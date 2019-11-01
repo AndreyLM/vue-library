@@ -4,12 +4,12 @@
      )
             v-card.elevation-12
                 v-toolbar.dark(color="primary")
-                    v-toolbar-title Articles
+                    v-toolbar-title {{ $t('article.articles') }}
                     v-spacer
                     v-text-field(
                         v-model="options.search"
                         append-icon="search"
-                        label="Search"
+                        :label=" $t('form.label.search') "
                         single-line
                         hide-details
                     )
@@ -42,14 +42,14 @@
                                 flat
                                 color="white"
                             )
-                                v-toolbar-title List
+                                v-toolbar-title {{ $t('form.title.list') }}
                                 v-spacer
                                 v-icon(
                                     color="primary"
                                     @click="newArticle"
                                     x-large
                                 ) add_box
-                        
+
                         template(
                             v-slot:item.action="{ item }"
                         )
@@ -58,8 +58,8 @@
                                 small
                                 @click="editItem(item)"
                             ) edit
-                               
-                        
+
+
 
 </template>
 
@@ -107,7 +107,7 @@ export default {
         dialog (val) {
             val || this.close()
         }
-    }, 
+    },
     computed: {
         ...mapState({
             languages: state => state.article.languages,
@@ -142,7 +142,7 @@ export default {
         }
     },
     mounted() {
-        // this.$store.dispatch("description_manager/loadDescriptionList", this.options) 
+        // this.$store.dispatch("description_manager/loadDescriptionList", this.options)
         !this.languages.length && this.$store.dispatch("article/loadLanguages")
     }
 }

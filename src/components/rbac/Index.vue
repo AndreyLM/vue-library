@@ -4,7 +4,7 @@
      )
         v-card.elevation-12
             v-toolbar.dark(color="primary")
-                v-toolbar-title RBAC Manager
+                v-toolbar-title {{ $t('form.title.rbac') }}
                 v-spacer
             v-card-text
 
@@ -14,17 +14,17 @@
                 )
                     v-card
                         v-card-title
-                            span.headline New Role
+                            span.headline {{ $t('form.title.roleNew') }}
                         v-card-text
                             v-text-field(
                                 v-model="role_name"
-                                label="Role name"
+                                :label=" $t('form.label.roleName') "
                                 @input="$v.role_name.$touch()"
                                 @blur="$v.role_name.$touch()"
                                 :error-messages="$v.role_name.$dirty && !$v.role_name.required ? [ 'The field is required' ] : []"
                             )
 
-                        
+
                         v-col.text-center(v-if="requestLoading")
                             v-progress-circular(
                                 :size="60"
@@ -37,15 +37,15 @@
                         )
                             v-spacer
                             v-btn(
-                                color="blue darken-1" 
-                                text 
+                                color="blue darken-1"
+                                text
                                 @click="closeNew"
-                            ) Cancel
+                            ) {{ $t('buttons.cancel') }}
                             v-btn(
-                                color="blue darken-1" 
-                                text 
+                                color="blue darken-1"
+                                text
                                 @click="saveNew"
-                            ) Save
+                            ) {{ $t('buttons.save') }}
                             v-spacer
 
                 v-dialog(
@@ -56,7 +56,7 @@
                         v-card-title
                             span.headline Delete Role {{ `"${delete_role.name}"` }}?
                         v-card-text
-                        
+
                         v-col.text-center(v-if="requestLoading")
                             v-progress-circular(
                                 :size="60"
@@ -69,20 +69,20 @@
                         )
                             v-spacer
                             v-btn(
-                                color="blue darken-1" 
-                                text 
+                                color="blue darken-1"
+                                text
                                 @click="saveDelete"
                             ) OK
                             v-spacer
                             v-btn(
-                                color="blue darken-1" 
-                                text 
+                                color="blue darken-1"
+                                text
                                 @click="closeDelete"
                             ) Cancel
 
                 v-row
                     v-col(cols="4")
-                        h4 Roles
+                        h4 {{ $tc('form.label.role', 1) }}
                         v-radio-group(
                             v-model="selectedRoleUUID"
                         )
@@ -102,14 +102,14 @@
                                         color="danger"
                                         @click="openRoleDialogDelete(role)"
                                     ) X
-                       
+
                         v-icon(
                             color="primary"
                             @click="openRoleDialogNew"
                             x-large
                         ) add_box
                     v-col(cols="8")
-                        h4 Permissions
+                        h4 {{ $tc('form.label.permission', 1) }}
                         v-row(v-if="loading")
                             v-col.text-center(cols="12")
                                 v-progress-circular(
@@ -121,7 +121,7 @@
 
                         v-row
                             v-col(
-                                v-for="permission in permissions"    
+                                v-for="permission in permissions"
                                 :key="permission.uuid"
                                 cols="6"
                             )
@@ -136,11 +136,11 @@
                 v-btn(
                     color="default"
                     @click="reset"
-                ) Reset
+                ) {{ $t('buttons.reset') }}
                 v-btn(
                     color="primary"
                     @click="updateRolePermissions"
-                ) Save
+                ) {{ $t('buttons.save') }}
                 v-spacer
 
 </template>
@@ -194,11 +194,11 @@ export default {
             this.loading = true
             let uuids = this.selectedRolePermissions.reduce((arr, val ) => { arr.push(val.uuid); return arr }, [])
             let resp = await this.$store.dispatch("rbac/updateRolePermissions",{ uuid: this.selectedRoleUUID, permissions: uuids } )
-            let type = (resp.status == 200) ? "success" : "error"; 
+            let type = (resp.status == 200) ? "success" : "error";
             this.$notify({
                     group: "alerts",
-                    title: resp.status || "Undefined status",
-                    text: resp.message || "Undefined error",
+                    title: resp.status || this.$t('alert.undefined.status'),
+                    text: resp.message || this.$t('alert.undefined.error'),
                     type: type,
             })
             this.loading = false
@@ -226,8 +226,8 @@ export default {
             if( this.$v.$invalid ) {
                 this.$notify({
                     group: "alerts",
-                    title: "Invalid data",
-                    text: "Please, enter correct data",
+                    title: this.$t('alert.title'),
+                    text: this.$t('alert.text'),
                     type: "error",
                 })
                 return
@@ -268,6 +268,6 @@ export default {
     created() {
         !this.roles.length && this.$store.dispatch("rbac/loadRoles")
         !this.permissions.length && this.$store.dispatch("rbac/loadPermissions")
-    }    
+    }
 }
 </script>

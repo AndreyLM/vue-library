@@ -4,7 +4,7 @@
      )
         v-card.elevation-12
             v-toolbar.dark(color="primary")
-                v-toolbar-title User Manager
+                v-toolbar-title {{ $t('form.title.user.manager') }}
                 v-spacer
             v-card-text
                 v-data-table(
@@ -22,7 +22,7 @@
                             flat
                             color="white"
                         )
-                            v-toolbar-title List
+                            v-toolbar-title {{ $t('form.title.list') }}
 
                         v-dialog(
                             v-model="dialog"
@@ -30,14 +30,14 @@
                         )
                             v-card
                                 v-card-title
-                                    span.headline Edit
+                                    span.headline {{ $t('form.title.edit') }}
                                 v-card-text
                                     v-container
                                         v-row
                                             v-col(cols12 md="6")
                                                 v-select(
                                                     v-model="editedItem.role_uuid"
-                                                    label="Role"
+                                                    :label=" $tc('form.label.role', 0) "
                                                     :items="roles"
                                                     item-text="name"
                                                     item-value="uuid"
@@ -46,22 +46,22 @@
                                             v-col(cols12 md="6")
                                                 v-switch(
                                                     v-model="editedItem.is_active"
-                                                    label="Is active"
+                                                    :label=" $t('form.label.isActive') "
                                                 )
                                 v-card-actions
                                     v-spacer
                                     v-btn(
-                                        color="blue darken-1" 
-                                        text 
+                                        color="blue darken-1"
+                                        text
                                         @click="close"
-                                    ) Cancel
+                                    ) {{ $t('buttons.cancel') }}
                                     v-btn(
-                                        color="blue darken-1" 
-                                        text 
+                                        color="blue darken-1"
+                                        text
                                         @click="save"
-                                    ) Save
+                                    ) {{ $t('buttons.save') }}
                                     v-spacer
-                    
+
                     template(
                         v-slot:item.action="{ item }"
                     )
@@ -78,8 +78,8 @@
                             disabled=true
                             v-model="item.is_active"
                         )
-                               
-                        
+
+
 
 </template>
 
@@ -104,13 +104,13 @@ export default {
                 role_uuid: ""
             },
             options: {},
-            headers: [
-                { text: 'login', value: 'login' },
-                { text: 'Full Name', value: 'full_name' },
-                { text: 'Active', value: 'is_active' },
-                { text: 'Role', value: 'role_name' },
-                { text: 'Actions', value: 'action', sortable: false },
-            ]
+            // headers: [
+            //     { text: 'Login', value: 'login' },
+            //     { text: 'Full Name', value: 'full_name' },
+            //     { text: 'Active', value: 'is_active' },
+            //     { text: 'Role', value: 'role_name' },
+            //     { text: 'Actions', value: 'action', sortable: false },
+            // ]
         }
     },
     watch: {
@@ -125,13 +125,22 @@ export default {
         dialog (val) {
             val || this.close()
         }
-    }, 
+    },
     computed: {
         ...mapState({
             users: state => state.user_manager.userList,
             totalCount: state => state.user_manager.totalCount,
             roles: state => state.rbac.roles,
-        })
+        }),
+        headers() {
+            return [
+                { text: this.$t('test'), value: 'login' },
+                { text: 'Full Name', value: 'full_name' },
+                { text: 'Active', value: 'is_active' },
+                { text: 'Role', value: 'role_name' },
+                { text: 'Actions', value: 'action', sortable: false },
+            ]
+        }
     },
     methods: {
         editItem(item) {
@@ -166,7 +175,7 @@ export default {
         }
     },
     mounted() {
-        !this.roles.length && this.$store.dispatch("rbac/loadRoles") 
+        !this.roles.length && this.$store.dispatch("rbac/loadRoles")
     }
 }
 

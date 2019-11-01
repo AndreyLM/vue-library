@@ -3,14 +3,14 @@
         v-flex.sm12.sm8.md4
             v-card.elevation-12
                 v-toolbar.dark(color="primary")
-                    v-toolbar-title Login Form
+                    v-toolbar-title {{ $t('form.title.login') }}
                     v-spacer
                 v-card-text
                     v-form
                         v-text-field(
                             prepend-icon="person",
                             name="login",
-                            label="Login or email",
+                            :label=" $t('form.label.loginOrEmail') ",
                             type="text"
                             v-model="user"
                             @input="$v.user.$touch()"
@@ -20,7 +20,7 @@
                         v-text-field(
                             prepend-icon="lock",
                             name="password",
-                            label="Password",
+                            :label=" $t('form.label.password') ",
                             type="password",
                             v-model="password"
                             @input="$v.password.$touch()"
@@ -32,13 +32,13 @@
                     v-btn(
                         color="default",
                         @click.prepend="registration"
-                    ) registration
+                    ) {{ $t('buttons.registration') }}
                     v-btn(
                         color="primary",
                         @click.prepend="login"
-                    ) Login
-                   
-                       
+                    ) {{ $t('buttons.login') }}
+
+
 
 </template>
 
@@ -47,6 +47,7 @@
 import { required, minLength } from 'vuelidate/lib/validators'
 
 export default {
+
     name: "login",
     data: () => {
         return {
@@ -64,17 +65,17 @@ export default {
             if(!this.$v.user.$dirty) {
                 return errors
             }
-            !this.$v.user.required && errors.push("The field is required")
-            !this.$v.user.minLength && errors.push("Min length must be 4 symbols") 
-            return errors   
+            !this.$v.user.required && errors.push( this.$t('errors.required') )
+            !this.$v.user.minLength && errors.push( this.$tc('errors.minLength', 4) )
+            return errors
         },
         passwordErrors() {
             var errors = []
             if(!this.$v.password.$dirty) {
                 return errors
             }
-            !this.$v.password.required && errors.push("The field is required")
-            !this.$v.password.minLength && errors.push("Min length must be 6 symbols") 
+            !this.$v.password.required && errors.push( this.$t('errors.required') )
+            !this.$v.password.minLength && errors.push( this.$tc('errors.minLength', 6) )
             return errors
         }
     },
