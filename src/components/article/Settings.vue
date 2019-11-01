@@ -116,28 +116,21 @@ export default {
             formData.append('file', this.$refs.file.files[0]);
             let resp = await this.$store.dispatch("article/upload", formData )
 
-            if ( resp.status != 200 ) {
-                this.$notify({
-                    group: "alerts",
-                    title: resp.status,
-                    text: resp.message,
-                    type: 'error',
-                })
-                return
-            }
+            this.$notify({
+                group: "alerts",
+                title: resp.status,
+                text: resp.message,
+                type: resp.status == 200 ? 'success' : 'error',
+            })
         },
         async deleteLanguage(id) {
             let resp = await this.$store.dispatch("article/deleteLanguage", id )
-
-            if ( resp.status != 200 ) {
-                this.$notify({
-                    group: "alerts",
-                    title: resp.status,
-                    text: resp.message,
-                    type: 'error',
-                })
-                return
-            }
+            this.$notify({
+                group: "alerts",
+                title: resp.status,
+                text: resp.message,
+                type: resp.status == 200 ? 'success' : 'error',
+            })
         },
         addLanguage() {
             this.is_new = true

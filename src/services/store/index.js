@@ -94,6 +94,11 @@ export default new Vuex.Store({
             response.status == 200 && context.dispatch('auth', response.data)
             return response
         },
+        async authenticatedRequest(context, request) {
+            let response = await context.rootState.$server.request(request.url, request.data || {}, request.method || "GET", request.headers || null)
+            response.status == 401 && context.dispatch("logout")
+            return response
+        },
         logout({ commit }) {
             commit('SetAuthenticated', false)
             commit('SetServerToken', '')
@@ -108,8 +113,5 @@ export default new Vuex.Store({
             commit('SetUser', user)
             commit('SetAuthenticated', true)
         },
-        checkRequest(context, response) {
-            response.status == 401 && context.dispatch("logout")
-        }
     }
 })

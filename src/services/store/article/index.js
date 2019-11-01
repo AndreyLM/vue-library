@@ -40,25 +40,25 @@ export default {
     },
     actions: {
         async loadList(context, data) {
-            let limit = (data.page) ? (data.page - 1 ) : 0
-            let order_by = data.sortBy[0] ? data.sortBy[0] + ( data.sortDesc[0] ? " DESC": "") : ""
-
             let request = {
-                "limit": data.itemsPerPage || 10,
-                "offset": limit,
-                "order_by": order_by,
-                "search": data.search || "",  
+                url: ARTICLES,
+                data: {
+                    "limit": data.itemsPerPage || 10,
+                    "offset":  (data.page) ? (data.page - 1 ) : 0,
+                    "order_by": data.sortBy[0] ? data.sortBy[0] + ( data.sortDesc[0] ? " DESC": "") : "",
+                    "search": data.search || "",  
+                },
             }
-            let response = await context.rootState.$server.request( ARTICLES, request, 'GET' )
-            response.status == 401 && context.dispatch("logout")
+
+            let response = await context.dispatch('authenticatedRequest', request, { root: true })
             response.status == 200 && context.commit("setTotalCount", response.data.count) 
-            response.status == 200 && context.commit("setRegisterList", await response.data.models) 
+            response.status == 200 && context.commit("setRegisterList", response.data.models) 
                 
             return response.data.totalCount || false
         },
         async create(context, data) {
-            let response = await context.rootState.$server.request( ARTICLES, data, 'POST' ) 
-            response.status == 401 && context.dispatch("logout")
+            let request = {url: ARTICLES, data: data, method: 'POST'}
+            let response = await context.dispatch('authenticatedRequest', request, { root: true } )
             return response
         },
         async update(context, data) {
@@ -67,35 +67,32 @@ export default {
             return response
         },
         async upload(context, data) {
-            let response = await context.rootState.$server.request( IMPORT, data, 'POST', { 'Content-Type': 'multipart/form-data' } ) 
-            response.status == 401 && context.dispatch("logout")
+            let request = {url: IMPORT, data: data, method: 'POST', headers: { 'Content-Type': 'multipart/form-data' } }
+            let response = await context.dispatch('authenticatedRequest', request, { root: true } )
             return response
         },
         async loadLanguages(context) {
-            let response = await context.rootState.$server.request( LANGUAGES, {}, 'GET' )
-            response.status == 401 && context.dispatch("logout")
+            let response = await context.dispatch('authenticatedRequest', { url: LANGUAGES }, { root: true } )
             response.status == 200 && context.commit("setLanguages", response.data.languages)
             return response
         },
         async deleteLanguage(context, id) {
-            let resp =  await context.rootState.$server.request( `${LANGUAGES}/${id}`, {}, 'DELETE' )
-            if ( resp.status == 200) {
-                context.commit("deleteLanguage", id)
-            }
-            resp.status == 401 && context.dispatch("logout")
-            return resp
+            let response = await context.dispatch('authenticatedRequest', { url: `${LANGUAGES}/${id}`, method: 'DELETE' }, { root: true } )
+            response.status == 200 && context.commit("deleteLanguage", id)
+            return response
         },
         async saveLanguage(context, data) {
             let edit = data.id ? true : false 
-            let url = data.id ? `${LANGUAGES}/${data.id}` : `${LANGUAGES}`
-            let method = data.id ? 'PATCH' : 'POST'
-            let resp =  await context.rootState.$server.request( url, data, method )
-            if ( resp.status == 200) {
-                !edit && ( data.id = resp.data.id )
-                context.commit("saveLanguage", { language: data, edit: edit })
+
+            let request = {
+                url: edit ? `${LANGUAGES}/${data.id}` : `${LANGUAGES}`, 
+                data: data, 
+                method: edit ? 'PATCH' : 'POST'
             }
-            resp.status == 401 && context.dispatch("logout")
-            return resp
+            let response = await context.dispatch('authenticatedRequest', request, { root: true } )
+            response.status == 200 && !edit && ( data.id = response.data.id )
+            response.status == 200 && context.commit("saveLanguage", { language: data, edit: edit })
+            return response
         }
 
     }

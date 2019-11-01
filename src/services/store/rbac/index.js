@@ -17,30 +17,32 @@ export default {
     },
     actions: {
         async loadRoles(context) {
-            let response = await context.rootState.$server.request( ROLES, {}, 'GET' )
+            let response = await context.dispatch('authenticatedRequest', { url: ROLES }, { root: true } )
             response.status == 200 && context.commit("setRoles", response.data.roles)
-            response.status == 401 && context.dispatch("logout")
-
             return response
         },
         async loadPermissions(context) {
-            let response = await context.rootState.$server.request( PERMISSIONS, {}, 'GET' )
-            response.status == 200 && context.commit("setPermissions", response.data.permissions) 
-            response.status == 401 && context.dispatch("logout")
-
+            let response = await context.dispatch('authenticatedRequest', { url: PERMISSIONS }, { root: true } )
+            response.status == 200 && context.commit("setPermissions", response.data.permissions)
             return response
         },
         async getRolePermissions(context, data) {
-            return await context.rootState.$server.request( `${ROLES}/${data}`, {}, 'GET' )
+            return await context.dispatch('authenticatedRequest', { url: `${ROLES}/${data}` }, { root: true } )
         },
         async updateRolePermissions(context, data) {
-            return await context.rootState.$server.request( `${ROLES}/${data.uuid}`, data, 'PATCH' )
+            return await context.dispatch(
+                'authenticatedRequest', 
+                { url: `${ROLES}/${data.uuid}`, data: data,  method: 'PATCH' }, 
+                { root: true } )
         },
         async createRole(context, data) {
-            return await context.rootState.$server.request( ROLES, data, 'POST' )
+            return await context.dispatch('authenticatedRequest', { url: ROLES, data: data, method: 'POST' }, { root: true } )
         },
         async deleteRole(context, data) {
-            return await context.rootState.$server.request( `${ROLES}/${data.uuid}`, data, 'DELETE' )
+            return await context.dispatch(
+                'authenticatedRequest', 
+                { url: `${ROLES}/${data.uuid}`, data: data, method: 'DELETE' }, 
+                { root: true } )
         }
     }
 }
