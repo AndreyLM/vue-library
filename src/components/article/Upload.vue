@@ -24,7 +24,7 @@ import { axios } from '@/plugins/axios'
                     v-spacer
                     v-btn(
                         color="primary",
-                        @click="submitFile()"
+                        @click="upload"
                     ) Upload
                        
 
@@ -43,12 +43,9 @@ export default {
 
             let formData = new FormData();
 
-            console.log( formData );
             formData.append('file', this.file);
-            console.log( formData );
 
             let resp = await this.$server.request("api/upload-document", formData, 'POST', { 'Content-Type': 'multipart/form-data' } )
-            console.log(resp)
             if ( resp.status != 200 ) {
                 this.$notify({
                     group: "alerts",
@@ -60,32 +57,6 @@ export default {
             }
 
             this.$router.push({ path: '/upload' })
-        },
-        submitFile() {
-        
-            let formData = new FormData();
-
-            console.log( formData );
-            formData.append('file', this.file);
-            console.log( formData );
-
-            this.$axios( {
-                method: 'post',
-                url: 'http://mspmlibs.dev7.finport.net/api/upload-document',
-                data: formData,
-                config: { headers: { 'Content-Type': 'application/json' } }
-            })
-            .then(function (response) {
-                console.log('success');
-                console.log(response);
-            })
-            .catch(function (response) {
-                console.log('error');
-                console.log(response);
-            });
-        },
-        handleFileUpload() {
-            this.file = this.$refs.file.files[0];
         },
         async profile() {
 
